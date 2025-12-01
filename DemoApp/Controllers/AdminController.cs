@@ -239,6 +239,198 @@ namespace DemoApp.Controllers
             return Ok();
         }
 
+        // GET: /admin/lessons?khoahocId=5
+        public async Task<IActionResult> Lessons(int? khoahocId)  // đúng: chữ thường
+        {
+            ViewBag.KhoaHocList = await _context.KhoaHoc
+                .Select(k => new { k.Id, k.TenKhoaHoc })
+                .OrderBy(k => k.TenKhoaHoc)
+                .ToListAsync();
+
+            ViewBag.SelectedKhoaHocId = khoahocId;  // đúng
+
+            var query = _context.BaiHoc.Include(b => b.KhoaHoc).AsQueryable();
+
+            if (khoahocId.HasValue)  // đúng
+                query = query.Where(b => b.KhoaHocId == khoahocId.Value);
+
+            var lessons = await query.OrderBy(b => b.ThuTuHienThi).ToListAsync();
+            return View(lessons);
+        }
+
+        // GET: Thêm bài học
+        public async Task<IActionResult> CreateLesson(int? khoahocId)
+        {
+            if (!khoahocId.HasValue)
+            {
+                return RedirectToAction("Index");
+            }
+
+            // Lấy thông tin khóa học
+            var khoaHoc = await _context.KhoaHoc.FindAsync(khoahocId.Value);
+            if (khoaHoc == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.KhoaHocList = await _context.KhoaHoc
+                .Select(k => new { k.Id, k.TenKhoaHoc })
+                .ToListAsync();
+
+            ViewBag.KhoaHocTen = khoaHoc.TenKhoaHoc;
+            ViewBag.SelectedKhoaHocId = khoahocId.Value;
+
+            // Tự động lấy số thứ tự tiếp theo
+            var maxOrder = await _context.BaiHoc
+                .Where(b => b.KhoaHocId == khoahocId.Value)
+                .MaxAsync(b => (int?)b.ThuTuHienThi) ?? 0;
+
+            var model = new BaiHoc
+            {
+                KhoaHocId = khoahocId.Value,
+                LoaiNoiDung = "Video",
+                ThuTuHienThi = maxOrder + 1
+            };
+
+            return View(model);
+        }
+
+        // POST: Thêm bài học
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateLesson(BaiHoc model, IFormFile? videoFile)
+        {
+            // Loại bỏ validation cho KhoaHoc navigation property
+            ModelState.Remove("KhoaHoc");
+            ModelState.Remove("TienDoHocTap");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Upload file nếu có (ưu tiên file upload hơn YouTube link)
+                    if (videoFile != null && videoFile.Length > 0)
+                    {
+                        var folder = Path.Combine("wwwroot", "videos", "lessons");
+                        Directory.CreateDirectory(folder);
+                        var fileName = Guid.NewGuid() + Path.GetExtension(videoFile.FileName);
+                        var path = Path.Combine(folder, fileName);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await videoFile.CopyToAsync(stream);
+                        }
+
+                        model.DuongDanNoiDung = "/videos/lessons/" + fileName;
+                    }
+                    // Nếu không có file upload, kiểm tra DuongDanNoiDung từ form (YouTube link)
+                    else if (string.IsNullOrEmpty(model.DuongDanNoiDung))
+                    {
+                        ModelState.AddModelError("DuongDanNoiDung", "Vui lòng chọn video từ YouTube hoặc upload file");
+                        ViewBag.KhoaHocList = await _context.KhoaHoc
+                            .Select(k => new { k.Id, k.TenKhoaHoc })
+                            .ToListAsync();
+
+                        var khoaHoc = await _context.KhoaHoc.FindAsync(model.KhoaHocId);
+                        ViewBag.KhoaHocTen = khoaHoc?.TenKhoaHoc;
+                        ViewBag.SelectedKhoaHocId = model.KhoaHocId;
+
+                        return View(model);
+                    }
+
+                    // Thêm bài học vào database
+                    _context.BaiHoc.Add(model);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Thêm bài học thành công!";
+                    return RedirectToAction("Index", new { khoahocId = model.KhoaHocId });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
+                }
+            }
+            else
+            {
+                // Debug: In ra lỗi validation
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage);
+
+                foreach (var error in errors)
+                {
+                    System.Diagnostics.Debug.WriteLine("Validation Error: " + error);
+                }
+            }
+
+            // Nếu có lỗi, load lại form
+            ViewBag.KhoaHocList = await _context.KhoaHoc
+                .Select(k => new { k.Id, k.TenKhoaHoc })
+                .ToListAsync();
+
+            var kh = await _context.KhoaHoc.FindAsync(model.KhoaHocId);
+            ViewBag.KhoaHocTen = kh?.TenKhoaHoc;
+            ViewBag.SelectedKhoaHocId = model.KhoaHocId;
+
+            return View(model);
+        }
+
+        // GET: Sửa bài học
+        public async Task<IActionResult> EditLesson(int id)
+        {
+            var lesson = await _context.BaiHoc.FindAsync(id);
+            if (lesson == null) return NotFound();
+
+            ViewBag.KhoaHocList = await _context.KhoaHoc.Select(k => new { k.Id, k.TenKhoaHoc }).ToListAsync();
+            return View(lesson);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditLesson(BaiHoc model, IFormFile? videoFile)
+        {
+            if (ModelState.IsValid)
+            {
+                if (videoFile != null && videoFile.Length > 0)
+                {
+                    var folder = Path.Combine("wwwroot", "videos", "lessons");
+                    Directory.CreateDirectory(folder);
+                    var fileName = Guid.NewGuid() + Path.GetExtension(videoFile.FileName);
+                    var path = Path.Combine(folder, fileName);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await videoFile.CopyToAsync(stream);
+                    model.DuongDanNoiDung = "/videos/lessons/" + fileName;
+                }
+
+                _context.BaiHoc.Update(model);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Cập nhật thành công!";
+                return RedirectToAction("Lessons", new { khoahocId = model.KhoaHocId });
+            }
+            ViewBag.KhoaHocList = await _context.KhoaHoc.Select(k => new { k.Id, k.TenKhoaHoc }).ToListAsync();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult DeleteLesson(int id)
+        {
+            try
+            {
+                var lesson = _context.BaiHoc.FirstOrDefault(x => x.Id == id);
+                if (lesson == null)
+                    return Json(new { success = false, msg = "Không tìm thấy" });
+
+                _context.BaiHoc.Remove(lesson);
+                _context.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = ex.Message });
+            }
+        }
         // Quản lý người dùng
         public IActionResult Users() => View();
 

@@ -1,0 +1,783 @@
+﻿@model DemoApp.Models.BaiHoc
+
+@{
+    ViewData["Title"] = "Thêm bài học mới";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "lessons";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .page-title {
+        color: transparent;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        background-clip: text;
+        font-weight: 900;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+        margin-bottom: 0.8rem;
+    }
+
+    .page-subtitle {
+        color: #64748b;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin-top: 1rem;
+        margin-bottom: 0;
+        justify-content: center;
+    }
+
+    .breadcrumb-item a {
+        color: #0ea5e9;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .breadcrumb-item a:hover {
+            color: #0284c7;
+        }
+
+    .main-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .youtube-section {
+        background: linear-gradient(135deg, #ffffff, #fef3f2);
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 2px dashed #fca5a5;
+        transition: all 0.3s ease;
+    }
+
+        .youtube-section:hover {
+            border-color: #ff0000;
+            box-shadow: 0 8px 24px rgba(255, 0, 0, 0.15);
+        }
+
+    .youtube-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .youtube-icon-large {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ff0000, #cc0000);
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 24px rgba(255, 0, 0, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100%
+
+    {
+        transform: scale(1);
+        box-shadow: 0 8px 24px rgba(255, 0, 0, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(255, 0, 0, 0.5);
+    }
+
+    }
+
+    .youtube-title {
+        color: #0c4a6e;
+        font-weight: 800;
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .youtube-desc {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .youtube-input-wrapper {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .youtube-input {
+        width: 100%;
+        padding: 1.2rem 1.5rem 1.2rem 3.5rem;
+        border: 2px solid #cbd5e1;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+        .youtube-input:focus {
+            border-color: #ff0000;
+            box-shadow: 0 0 0 5px rgba(255, 0, 0, 0.1);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+    .youtube-input-icon {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.5rem;
+        color: #ff0000;
+        pointer-events: none;
+    }
+
+    .btn-youtube {
+        background: linear-gradient(135deg, #ff0000, #cc0000);
+        border: none;
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 24px rgba(255, 0, 0, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+        .btn-youtube::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-youtube:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-youtube:hover {
+            background: linear-gradient(135deg, #cc0000, #990000);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 0, 0, 0.5);
+        }
+
+    .btn-browse-youtube {
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        border: none;
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 24px rgba(234, 88, 12, 0.4);
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+        .btn-browse-youtube:hover {
+            background: linear-gradient(135deg, #c2410c, #9a3412);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(234, 88, 12, 0.5);
+        }
+
+    .video-preview {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-top: 2rem;
+        border: 2px solid #e0f2fe;
+        display: none;
+        animation: slideDown 0.5s ease;
+    }
+
+    @@keyframes slideDown {
+        from
+
+    {
+        opacity: 0;
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        max-height: 600px;
+    }
+
+    }
+
+    .video-preview.active {
+        display: block;
+    }
+
+    .video-iframe {
+        width: 100%;
+        height: 400px;
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .video-info {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border-radius: 16px;
+    }
+
+        .video-info h5 {
+            color: #0c4a6e;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .video-info p {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+    .form-section {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+    }
+
+    .section-title {
+        color: #0c4a6e;
+        font-weight: 800;
+        font-size: 1.4rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #e0f2fe;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #334155;
+        font-size: 0.95rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .required-star {
+        color: #ef4444;
+        font-size: 1.1rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+            outline: none;
+            background: white;
+            transform: translateY(-2px);
+        }
+
+    .course-info-box {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        padding: 1.5rem;
+        border-radius: 14px;
+        border: 2px solid #bae6fd;
+    }
+
+    .course-name {
+        color: #0369a1;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e0f2fe;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        color: white;
+        padding: 1.1rem 3.5rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+        }
+
+    .btn-cancel {
+        background: linear-gradient(135deg, #64748b, #475569);
+        border: none;
+        color: white;
+        padding: 1.1rem 3.5rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 24px rgba(100, 116, 139, 0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #475569, #334155);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(100, 116, 139, 0.4);
+            color: white;
+        }
+
+    .modal-youtube {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+        .modal-youtube.active {
+            display: flex;
+        }
+
+    .modal-content-youtube {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        max-width: 900px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.4s ease;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+    }
+
+    @@keyframes slideUp {
+        from
+
+    {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    }
+
+    .modal-header-youtube {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e0f2fe;
+    }
+
+    .modal-title-youtube {
+        color: #0c4a6e;
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+
+    .btn-close-modal {
+        background: #ef4444;
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .btn-close-modal:hover {
+            background: #dc2626;
+            transform: rotate(90deg);
+        }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">📝 Thêm bài học mới</h1>
+        <p class="page-subtitle">Tạo bài học từ video YouTube một cách dễ dàng và nhanh chóng</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-action="Index"><i class="bi bi-house-door"></i> Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-action="Index"><i class="bi bi-book"></i> Quản lý bài học</a>
+                </li>
+                <li class="breadcrumb-item active">Thêm mới</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Form -->
+    <form asp-action="CreateLesson" method="post" class="row g-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="KhoaHocId" value="@ViewBag.SelectedKhoaHocId" />
+        <input type="hidden" asp-for="DuongDanNoiDung" id="videoPath" />
+
+        <div class="col-lg-8">
+            <div class="main-card">
+                <!-- YouTube Section -->
+                <div class="youtube-section">
+                    <div class="youtube-header">
+                        <div class="youtube-icon-large">
+                            <i class="bi bi-youtube"></i>
+                        </div>
+                        <h3 class="youtube-title">Lấy video từ YouTube</h3>
+                        <p class="youtube-desc">Dán link YouTube hoặc chọn video từ kho của bạn</p>
+                    </div>
+
+                    <!-- Input YouTube URL -->
+                    <div class="youtube-input-wrapper">
+                        <i class="bi bi-youtube youtube-input-icon"></i>
+                        <input type="text"
+                               id="youtubeUrl"
+                               class="youtube-input"
+                               placeholder="Dán link YouTube vào đây (vd: https://www.youtube.com/watch?v=...)" />
+                    </div>
+
+                    <button type="button" onclick="fetchYouTubeData()" class="btn btn-youtube">
+                        <i class="bi bi-download"></i>
+                        Lấy thông tin video
+                    </button>
+
+                    <button type="button" onclick="openYouTubeBrowser()" class="btn btn-browse-youtube">
+                        <i class="bi bi-search"></i>
+                        Duyệt video trên YouTube
+                    </button>
+                </div>
+
+                <!-- Video Preview -->
+                <div id="youtubePreview" class="video-preview">
+                    <iframe id="youtubeIframe" class="video-iframe" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h5 id="videoTitle"></h5>
+                        <p id="videoDuration"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="main-card">
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">
+                            <i class="bi bi-info-circle"></i>
+                        </span>
+                        Thông tin bài học
+                    </h3>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-card-heading"></i>
+                            Tên bài học
+                            <span class="required-star">*</span>
+                        </label>
+                        <input asp-for="TenBaiHoc"
+                               class="form-control"
+                               id="lessonTitleInput"
+                               placeholder="Nhập tiêu đề bài học"
+                               required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-collection-play"></i>
+                            Loại nội dung
+                        </label>
+                        <select asp-for="LoaiNoiDung" class="form-select">
+                            <option value="Video" selected>🎥 Video</option>
+                            <option value="Bài đọc">📖 Bài đọc</option>
+                            <option value="Quiz">❓ Quiz</option>
+                            <option value="Bài tập">✍️ Bài tập</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-clock"></i>
+                            Thời lượng (phút)
+                        </label>
+                        <input asp-for="ThoiLuong"
+                               type="number"
+                               class="form-control"
+                               id="durationInput"
+                               placeholder="Ví dụ: 45"
+                               min="1" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-mortarboard"></i>
+                            Thuộc khóa học
+                        </label>
+                        <div class="course-info-box">
+                            <p class="course-name">📚 @ViewBag.KhoaHocTen</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-sort-numeric-down"></i>
+                            Thứ tự hiển thị
+                        </label>
+                        <input asp-for="ThuTuHienThi"
+                               type="number"
+                               class="form-control"
+                               placeholder="0"
+                               min="0" />
+                    </div>
+
+                    <div class="action-buttons">
+                        <a asp-action="Index"
+                           asp-route-khoahocId="@ViewBag.SelectedKhoaHocId"
+                           class="btn-cancel">
+                            <i class="bi bi-x-circle"></i>
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-check-circle"></i>
+                            Lưu bài học
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal YouTube Browser -->
+<div id="youtubeModal" class="modal-youtube">
+    <div class="modal-content-youtube">
+        <div class="modal-header-youtube">
+            <h2 class="modal-title-youtube">🔍 Tìm kiếm video trên YouTube</h2>
+            <button type="button" class="btn-close-modal" onclick="closeYouTubeBrowser()">×</button>
+        </div>
+        <div class="youtube-input-wrapper">
+            <i class="bi bi-search youtube-input-icon"></i>
+            <input type="text"
+                   id="youtubeSearchInput"
+                   class="youtube-input"
+                   placeholder="Tìm kiếm video..."
+                   onkeypress="if(event.key==='Enter') searchYouTube()" />
+        </div>
+        <button type="button" onclick="searchYouTube()" class="btn btn-youtube mb-4">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+        <div id="searchResults" style="max-height: 500px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function fetchYouTubeData() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            if (!url) {
+                Swal.fire('Oops!', 'Vui lòng nhập link YouTube', 'warning');
+                return;
+            }
+
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                Swal.fire('Lỗi!', 'Link YouTube không hợp lệ', 'error');
+                return;
+            }
+
+            loadVideoData(videoId);
+        }
+
+        function extractVideoId(url) {
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
+            return match ? match[1] : null;
+        }
+
+        function loadVideoData(videoId) {
+            fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) throw new Error();
+
+                    document.getElementById('lessonTitleInput').value = data.title;
+                    document.getElementById('videoTitle').textContent = data.title;
+                    document.getElementById('videoPath').value = `https://www.youtube.com/embed/${videoId}`;
+                    document.getElementById('youtubeIframe').src = `https://www.youtube.com/embed/${videoId}`;
+
+                    if (data.duration) {
+                        const mins = Math.floor(data.duration / 60);
+                        document.getElementById('durationInput').value = mins;
+                        document.getElementById('videoDuration').textContent = `⏱️ Thời lượng: ${mins} phút`;
+                    }
+
+                    document.getElementById('youtubePreview').classList.add('active');
+                    Swal.fire('Thành công!', 'Đã lấy thông tin video YouTube', 'success');
+                })
+                .catch(() => {
+                    Swal.fire('Lỗi!', 'Không thể lấy thông tin video. Hãy nhập thủ công.', 'error');
+                });
+        }
+
+        function openYouTubeBrowser() {
+            document.getElementById('youtubeModal').classList.add('active');
+        }
+
+        function closeYouTubeBrowser() {
+            document.getElementById('youtubeModal').classList.remove('active');
+        }
+
+        function searchYouTube() {
+            const query = document.getElementById('youtubeSearchInput').value.trim();
+            if (!query) {
+                Swal.fire('Oops!', 'Vui lòng nhập từ khóa tìm kiếm', 'warning');
+                return;
+            }
+
+            // Mở YouTube search trong tab mới
+            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
+
+            Swal.fire({
+                title: 'Hướng dẫn',
+                html: `
+                    <p style="font-size: 1rem; line-height: 1.6;">
+                        1. Chọn video bạn muốn từ YouTube<br>
+                        2. Copy link video (URL trên thanh địa chỉ)<br>
+                        3. Quay lại đây và dán link vào ô bên trên<br>
+                        4. Nhấn "Lấy thông tin video"
+                    </p>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Đã hiểu'
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('youtubeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeYouTubeBrowser();
+            }
+        });
+    </script>
+}

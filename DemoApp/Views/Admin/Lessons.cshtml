@@ -1,0 +1,633 @@
+﻿@model List<DemoApp.Models.BaiHoc>
+
+@{
+    ViewData["Title"] = "Quản lý bài học";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "lessons";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+    }
+
+    .page-title {
+        color: #0c4a6e;
+        font-weight: 800;
+        font-size: 2.2rem;
+        letter-spacing: -0.5px;
+        margin: 0;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stats-badge {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        color: white;
+        padding: 0.7rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        display: inline-block;
+        margin-top: 1rem;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100%
+
+    {
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 8px 28px rgba(14, 165, 233, 0.6);
+    }
+
+    }
+
+    .controls-section {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .form-select {
+        border: 2px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 0.75rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+        min-width: 300px;
+    }
+
+        .form-select:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+    .btn-add {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-add::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-add:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(16, 185, 129, 0.5);
+            color: white;
+        }
+
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .table {
+        margin: 0;
+    }
+
+        .table thead {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
+
+            .table thead th {
+                padding: 1.3rem 1rem;
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 0.8px;
+                border: none;
+                color: white;
+                text-transform: uppercase;
+                vertical-align: middle;
+                text-align: center;
+            }
+
+        .table tbody td {
+            padding: 1.3rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+            .table tbody tr:hover {
+                background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+                transform: translateX(5px);
+                box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            }
+
+    .avatar-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover .avatar-circle {
+        transform: rotate(360deg) scale(1.1);
+    }
+
+    .lesson-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .lesson-title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #0c4a6e;
+        line-height: 1.4;
+        margin-bottom: 0.4rem;
+    }
+
+    .lesson-subtitle {
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+
+    .youtube-tag {
+        background: linear-gradient(135deg, #ff0000, #cc0000);
+        color: white;
+        font-size: 0.7rem;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 10px rgba(255, 0, 0, 0.3);
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: glow 2s infinite;
+    }
+
+    @@keyframes glow {
+        0%, 100%
+
+    {
+        box-shadow: 0 3px 10px rgba(255, 0, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 3px 20px rgba(255, 0, 0, 0.6);
+    }
+
+    }
+
+    .order-number {
+        font-size: 1.6rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-badge {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        padding: 0.6rem 1.3rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover .course-badge {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .type-badge {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+        color: white;
+        padding: 0.6rem 1.3rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover .type-badge {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+
+    .duration-badge {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.6rem 1.3rem;
+        border-radius: 14px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover .duration-badge {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.7rem;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-action {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+    }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-action:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-4px) scale(1.1);
+        }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+    }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+            color: white;
+        }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+    }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        animation: fadeIn 0.6s ease;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+    }
+
+    .empty-icon {
+        font-size: 5.5rem;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        opacity: 0.6;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100%
+
+    {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    }
+
+    .empty-title {
+        color: #475569;
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-top: 1.5rem;
+    }
+
+    .empty-text {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+
+    .text-primary-gradient {
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+                <h2 class="page-title">Quản lý bài học</h2>
+                <div class="stats-badge">
+                    📚 Tổng cộng: @Model.Count bài học
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <select asp-items="@(new SelectList(ViewBag.KhoaHocList, "Id", "TenKhoaHoc", ViewBag.SelectedKhoaHocId))"
+                    class="form-select shadow-sm"
+                    onchange="location.href = this.value ? '/admin/lessons?khoahocId=' + this.value : '/admin/lessons'">
+                <option value="">🎓 Tất cả khóa học</option>
+            </select>
+
+            @if (ViewBag.SelectedKhoaHocId != null)
+            {
+                <a asp-action="CreateLesson"
+                   asp-route-khoahocId="@ViewBag.SelectedKhoaHocId"
+                   class="btn-add">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                    </svg>
+                    Thêm bài học mới
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Table -->
+    @if (Model.Any())
+    {
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">#</th>
+                            <th style="min-width: 300px">Tiêu đề bài học</th>
+                            <th style="width:200px">Khóa học</th>
+                            <th style="width:140px">Loại</th>
+                            <th style="width:140px">Thời lượng</th>
+                            <th style="width:140px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var firstLetter = item.TenBaiHoc?.FirstOrDefault().ToString().ToUpper() ?? "B";
+                            <tr>
+                                <td class="text-center">
+                                    <div class="order-number">@item.ThuTuHienThi</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="avatar-circle">
+                                            @firstLetter
+                                        </div>
+                                        <div class="lesson-info">
+                                            <div class="lesson-title">@item.TenBaiHoc</div>
+                                            <div class="lesson-subtitle">
+                                                @if (!string.IsNullOrEmpty(item.DuongDanNoiDung) &&
+                                               (item.DuongDanNoiDung.Contains("youtube") || item.DuongDanNoiDung.Contains("youtu.be")))
+                                                {
+                                                    <span class="youtube-tag">YouTube</span>
+                                                }
+                                                <em>@item.KhoaHoc?.TenKhoaHoc</em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="course-badge">@item.KhoaHoc?.TenKhoaHoc</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="type-badge">@item.LoaiNoiDung</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.ThoiLuong.HasValue)
+                                    {
+                                        <span class="duration-badge">⏱️ @item.ThoiLuong phút</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fw-semibold">—</span>
+                                    }
+                                </td>
+                                <!-- Thay toàn bộ phần <td> thao tác này bằng đoạn dưới đây -->
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-action="EditLesson"
+                                           asp-route-id="@item.Id"
+                                           class="btn-action btn-edit"
+                                           title="Sửa bài học">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
+                                        <!-- NÚT XÓA SIÊU ĐẸP MỚI -->
+                                        <button type="button"
+                                                onclick="confirmDelete(@item.Id, '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.TenBaiHoc)')"
+                                                class="btn-action btn-delete"
+                                                title="Xóa bài học">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="table-card">
+            <div class="empty-state">
+                <i class="bi bi-film empty-icon"></i>
+                <h4 class="empty-title">Chưa có bài học nào</h4>
+                <p class="empty-text">
+                    @if (ViewBag.SelectedKhoaHocId != null)
+                    {
+                        <text>Hãy nhấn nút <strong class="text-primary-gradient">+ Thêm bài học mới</strong> để bắt đầu!</text>
+                    }
+                    else
+                    {
+                        <text>Vui lòng chọn một khóa học từ danh sách để quản lý bài học.</text>
+                    }
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(id, tenBaiHoc) {
+            Swal.fire({
+                title: 'Xóa bài học?',
+                html: `<strong style="color:#dc2626;">${tenBaiHoc}</strong><br><br>Bạn chắc chắn chứ?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xóa luôn!',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#dc2626'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Đang xóa...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    let data = new FormData();
+                    data.append("id", id);
+
+                    fetch('/admin/deletelesson', {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        Swal.close();
+                        if (res.success) {
+                            Swal.fire('Đã xóa!', '', 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi!', res.msg || 'Không thể xóa', 'error');
+                        }
+                    })
+                    .catch(() => {
+                        Swal.close();
+                        Swal.fire('Lỗi!', 'Không kết nối được server', 'error');
+                    });
+                }
+            });
+        }
+    </script>
+}

@@ -376,7 +376,7 @@
                             </div>
                             <div class="course-info">
                                 <h4>@course.CourseName</h4>
-                                <p>@course.Registrations.ToString("N0") học viên (@course.Percentage:0.##%)</p>
+                                <p>@course.Registrations.ToString("N0") học viên (@($"{course.Percentage:0.00}")%)</p>
                             </div>
                         </div>
                         rank++;

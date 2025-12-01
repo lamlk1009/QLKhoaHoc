@@ -1,0 +1,249 @@
+﻿@model DemoApp.Models.BaiHoc
+
+@{
+    ViewData["Title"] = "Chỉnh sửa bài học";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "lessons";
+}
+
+<style>
+    :root {
+        --primary: #0ea5e9;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #0c4a6e;
+    }
+
+    .edit-header {
+        background: linear-gradient(135deg, #ffffff, #f0f9ff);
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(14,165,233,0.12);
+        border: 1px solid #e0f2fe;
+        text-align: center;
+    }
+
+    .page-title {
+        color: transparent;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        background-clip: text;
+        font-weight: 800;
+        font-size: 2.4rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .youtube-input, .form-control, .form-select {
+        border-radius: 16px !important;
+        border: 2px solid #cbd5e1;
+        padding: 0.9rem 1.3rem;
+        font-size: 1rem;
+    }
+
+        .youtube-input:focus, .form-control:focus, .form-select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 5px rgba(14,165,233,0.15);
+        }
+
+    .btn-youtube {
+        background: linear-gradient(135deg, #ff0000, #cc0000);
+        color: white;
+        border: none;
+        padding: 0.9rem 2rem;
+        border-radius: 16px;
+        font-weight: 700;
+        box-shadow: 0 8px 25px rgba(255,0,0,0.4);
+    }
+
+        .btn-youtube:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(255,0,0,0.5);
+        }
+
+    .btn-save {
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        padding: 1rem 3rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+    }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(16,185,129,0.5);
+        }
+
+    .current-video {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="edit-header">
+        <h1 class="page-title">Chỉnh sửa bài học</h1>
+        <p class="lead text-muted">Cập nhật nội dung, tiêu đề, thời lượng hoặc thay video mới</p>
+    </div>
+
+    <form asp-action="EditLesson" method="post" enctype="multipart/form-data" class="row g-5">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="KhoaHocId" />
+
+        <div class="col-lg-8">
+            <!-- Video hiện tại (nếu là YouTube) -->
+            @if (!string.IsNullOrEmpty(Model.DuongDanNoiDung) &&
+            (Model.DuongDanNoiDung.Contains("youtube") || Model.DuongDanNoiDung.Contains("youtu.be")))
+            {
+                var youtubeId = "";
+                if (Model.DuongDanNoiDung.Contains("embed"))
+                {
+                    youtubeId = Model.DuongDanNoiDung.Split("embed/")[1].Split('?')[0];
+                }
+                else
+                {
+                    var match = System.Text.RegularExpressions.Regex.Match(Model.DuongDanNoiDung, "(?:v=|youtu\\.be/|embed/)([^&\\n?#]+)");
+                    youtubeId = match.Success ? match.Groups[1].Value : "";
+                }
+
+                if (!string.IsNullOrEmpty(youtubeId))
+                {
+                    <div class="card border-0 shadow-lg rounded-4 mb-4 current-video">
+                        <div class="card-header bg-danger text-white py-3 text-center">
+                            <h5 class="mb-0">Video hiện tại (YouTube)</h5>
+                        </div>
+                        <iframe width="100%" height="450"
+                                src="https://www.youtube.com/embed/@youtubeId"
+                                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </div>
+                }
+            }
+
+            <!-- Thay bằng video YouTube mới -->
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-gradient-primary text-white py-4 text-center">
+                    <h4 class="mb-0">Thay bằng video YouTube mới</h4>
+                </div>
+                <div class="card-body p-5">
+                    <div class="input-group input-group-lg mb-4">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-youtube text-danger fs-3"></i>
+                        </span>
+                        <input type="text" id="youtubeUrl" class="form-control youtube-input border-start-0"
+                               placeholder="Dán link YouTube mới vào đây..." />
+                    </div>
+                    <div class="text-center">
+                        <button type="button" onclick="updateYouTubeVideo()" class="btn btn-youtube btn-lg">
+                            Cập nhật video YouTube
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center my-4">
+                <h5 class="text-muted fw-bold">HOẶC</h5>
+            </div>
+
+            <!-- Upload video mới từ máy -->
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-5 text-center">
+                    <label class="form-label fw-bold fs-5">Upload video mới từ máy</label>
+                    <input type="file" name="videoFile" accept="video/*" class="form-control form-control-lg" />
+                    <small class="text-muted d-block mt-2">MP4, WebM, MOV – tối đa 500MB</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột thông tin -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 h-100">
+                <div class="card-header bg-gradient-primary text-white py-4 text-center">
+                    <h4 class="mb-0 fw-bold">Thông tin bài học</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tên bài học <span class="text-danger">*</span></label>
+                        <input asp-for="TenBaiHoc" class="form-control form-control-lg" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Loại nội dung</label>
+                        <select asp-for="LoaiNoiDung" class="form-select form-select-lg">
+                            <option value="Video">Video</option>
+                            <option value="Text">Bài viết</option>
+                            <option value="Quiz">Quiz</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Thời lượng (phút)</label>
+                        <input asp-for="ThoiLuong" type="number" class="form-control form-control-lg" placeholder="45" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Thứ tự hiển thị</label>
+                        <input asp-for="ThuTuHienThi" type="number" class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label fw-bold">Thuộc khóa học</label>
+                        <div class="p-3 bg-light rounded-3 border text-primary fw-bold fs-5">
+                            @ViewBag.KhoaHocTen
+                        </div>
+                    </div>
+
+                    <!-- Đường dẫn video (ẩn) -->
+                    <input type="hidden" asp-for="DuongDanNoiDung" id="videoPath" />
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-save text-white btn-lg px-5">
+                            Lưu thay đổi
+                        </button>
+                        <a asp-action="Lessons" asp-route-khoahocId="@Model.KhoaHocId"
+                           class="btn btn-outline-danger btn-lg ms-3">
+                            Hủy bỏ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function updateYouTubeVideo() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            if (!url) {
+                Swal.fire('Oops!', 'Vui lòng nhập link YouTube mới', 'warning');
+                return;
+            }
+
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
+            if (!match) {
+                Swal.fire('Lỗi!', 'Link YouTube không hợp lệ!', 'error');
+                return;
+            }
+
+            const videoId = match[1];
+            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
+            // Cập nhật hidden field
+            document.getElementById('videoPath').value = embedUrl;
+
+            Tải lại iframe preview (nếu có)
+            const iframe = document.querySelector('iframe');
+            if (iframe) iframe.src = embedUrl;
+
+            Swal.fire('Thành công!', 'Đã cập nhật video YouTube mới', 'success');
+        }
+    </script>
+}
