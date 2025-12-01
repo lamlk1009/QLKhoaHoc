@@ -1,0 +1,296 @@
+﻿/* ===== CART PAGE ===== */
+.cart-page {
+    min-height: calc(100vh - var(--header-height));
+    padding: 3rem 0;
+    background: #f8f9fa;
+}
+
+    .cart-page .container {
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 3rem;
+}
+
+/* ===== TABLE STYLES ===== */
+.table-responsive {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    overflow-x: auto;
+    margin-bottom: 2rem; /* Thêm khoảng cách dưới table */
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+        .table thead th {
+            padding: 1.25rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            white-space: nowrap;
+        }
+
+            .table thead th:first-child {
+                border-radius: 8px 0 0 0;
+                width: 45%;
+            }
+
+            .table thead th:nth-child(2) {
+                width: 30%;
+                text-align: right;
+            }
+
+            .table thead th:last-child {
+                border-radius: 0 8px 0 0;
+                width: 25%;
+                text-align: center;
+            }
+
+    .table tbody tr {
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+    .table tbody td {
+        padding: 2rem 1.5rem; /* Tăng padding để thoáng hơn */
+        vertical-align: middle;
+        font-size: 0.95rem;
+    }
+
+        .table tbody td strong {
+            display: block;
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 0.75rem; /* Tăng khoảng cách giữa tên và ngày */
+            font-weight: 600;
+        }
+
+        .table tbody td .text-muted {
+            color: #6c757d;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .table tbody td.text-end {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            padding-right: 2rem;
+        }
+
+        .table tbody td.text-center {
+            text-align: center;
+        }
+
+/* ===== BUTTONS ===== */
+.btn {
+    padding: 0.625rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-sm {
+    padding: 0.625rem 1.75rem; /* Tăng padding cho button Xóa */
+    font-size: 0.95rem;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    background: white;
+}
+
+    .btn-outline-danger:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border: 2px solid #6c757d;
+    background: white;
+    padding: 0.75rem 2rem; /* Tăng size nút "Xóa toàn bộ giỏ hàng" */
+}
+
+    .btn-outline-secondary:hover {
+        background: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 3rem; /* Tăng size nút "Đăng ký ngay" */
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+/* ===== FOOTER SECTION ===== */
+.d-flex {
+    display: flex;
+    padding: 2rem; /* Thêm padding cho phần footer */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.fs-5 {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 1rem; /* Thêm khoảng cách giữa tổng tiền và nút */
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.mt-3 {
+    margin-top: 2rem; /* Tăng margin-top */
+}
+
+/* ===== ALERT ===== */
+.alert {
+    padding: 2rem;
+    border-radius: 12px;
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.d-inline {
+    display: inline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .cart-page .container {
+        max-width: 100%;
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-page {
+        padding: 2rem 0;
+    }
+
+        .cart-page .container {
+            padding: 0 1rem;
+        }
+
+    .page-title {
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+    }
+
+    .table-responsive {
+        padding: 1rem;
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .table {
+        min-width: 600px;
+    }
+
+        .table thead th,
+        .table tbody td {
+            padding: 1rem;
+            font-size: 0.875rem;
+        }
+
+            .table tbody td strong {
+                font-size: 1rem;
+            }
+
+    .d-flex {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .text-end {
+        text-align: center;
+        width: 100%;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .btn-outline-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .table {
+        min-width: 500px;
+    }
+}

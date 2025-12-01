@@ -1,0 +1,320 @@
+﻿@model IEnumerable<DemoApp.Models.DangKyKhoaHoc>
+
+@{
+    ViewData["Title"] = "Khóa học của tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var total = ViewBag.TotalCourses as int? ?? Model.Count();
+    var completed = ViewBag.CompletedCourses as int? ?? 0;
+    var inProgress = ViewBag.InProgressCourses as int? ?? 0;
+}
+
+@section Styles {
+    <style>
+        .mycourses-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px 64px;
+        }
+
+        .mycourses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .mycourses-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .mycourses-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .mycourses-header-actions .btn-primary-outline {
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all .15s ease;
+        }
+
+            .mycourses-header-actions .btn-primary-outline:hover {
+                background: #4f46e5;
+                color: #fff;
+            }
+
+        .mycourses-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .mycourses-stat-card {
+            padding: 16px 18px;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .mycourses-stat-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .mycourses-stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .mycourses-stat-desc {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .mycourses-tabs {
+            display: inline-flex;
+            padding: 4px;
+            background: #f3f4f6;
+            border-radius: 999px;
+            margin-bottom: 20px;
+        }
+
+        .mycourses-tab {
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 13px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #6b7280;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .mycourses-tab.active {
+                background: #111827;
+                color: #f9fafb;
+            }
+
+        .mycourses-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        /* 🔴 SỬA LỖI Ở ĐÂY - MEDIA QUERY */
+        @@media (max-width: 900px) {
+            .mycourses-list
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .mycourses-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .mycourses-stats {
+            grid-template-columns: 1fr;
+        }
+
+        }
+
+        .mycourse-card {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+        
+    }
+        /* ... phần còn lại của CSS giữ nguyên ... */
+    </style>
+}
+
+<div class="mycourses-page">
+    <!-- Header -->
+    <div class="mycourses-header">
+        <div>
+            <h1 class="mycourses-title">Khóa học của tôi</h1>
+            <p class="mycourses-subtitle">
+                Theo dõi các khóa học bạn đã đăng ký, tiến độ học tập và tiếp tục học nhanh chóng.
+            </p>
+        </div>
+        <div class="mycourses-header-actions">
+            <a href="/courses/zoom" class="btn-primary-outline">
+                + Đăng ký thêm khóa học
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="mycourses-stats">
+        <div class="mycourses-stat-card">
+            <div class="mycourses-stat-label">Tổng khóa học</div>
+            <div class="mycourses-stat-value">@total</div>
+            <div class="mycourses-stat-desc">Tất cả khóa học bạn đã đăng ký.</div>
+        </div>
+        <div class="mycourses-stat-card">
+            <div class="mycourses-stat-label">Đang học</div>
+            <div class="mycourses-stat-value">@inProgress</div>
+            <div class="mycourses-stat-desc">Những khóa bạn đang theo học.</div>
+        </div>
+        <div class="mycourses-stat-card">
+            <div class="mycourses-stat-label">Đã hoàn thành</div>
+            <div class="mycourses-stat-value">@completed</div>
+            <div class="mycourses-stat-desc">Khóa học đã hoàn thành 100%.</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mycourses-tabs" id="myCoursesTabs">
+        <button class="mycourses-tab active" data-filter="all">Tất cả</button>
+        <button class="mycourses-tab" data-filter="in-progress">Đang học</button>
+        <button class="mycourses-tab" data-filter="completed">Đã hoàn thành</button>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="mycourses-list" id="myCoursesList">
+            @foreach (var reg in Model)
+            {
+                var course = reg.KhoaHoc;
+                if (course == null) { continue; }
+
+                var totalLessons = course.BaiHoc?.Count ?? 0;
+
+                // Tạm: logic tiến độ demo, sau anh thay bằng TienDoBaiHoc
+                int progress;
+                string statusClass;
+                string statusText;
+
+                if (reg.TrangThai == "HoanThanh")
+                {
+                    progress = 100;
+                    statusClass = "completed";
+                    statusText = "Đã hoàn thành";
+                }
+                else if (reg.TrangThai == "DangHoc")
+                {
+                    progress = 40; // demo, sẽ thay bằng tiến độ thật
+                    statusClass = "in-progress";
+                    statusText = "Đang học";
+                }
+                else
+                {
+                    progress = 0;
+                    statusClass = "in-progress";
+                    statusText = reg.TrangThai;
+                }
+
+                var category = course.DanhMuc?.TenDanhMuc ?? "Chưa phân loại";
+                var thumb = !string.IsNullOrEmpty(course.AnhBia)
+                ? course.AnhBia
+                : "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=800";
+
+                <div class="mycourse-card" data-status="@statusClass">
+                    <div class="mycourse-card-top">
+                        <div class="mycourse-thumb">
+                            <img src="@thumb" alt="@course.TenKhoaHoc" />
+                        </div>
+                        <div class="mycourse-info-main">
+                            <div class="mycourse-category">@category</div>
+                            <div class="mycourse-title" title="@course.TenKhoaHoc">
+                                @course.TenKhoaHoc
+                            </div>
+                            <div class="mycourse-meta">
+                                <span>@totalLessons bài học</span>
+                                <span>Đăng ký: @reg.NgayDangKy.ToString("dd/MM/yyyy")</span>
+                                <span class="mycourse-badge-status @statusClass">@statusText</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mycourse-progress-wrapper">
+                        <div class="mycourse-progress-label">
+                            <span>Tiến độ học tập</span>
+                            <span>@progress%</span>
+                        </div>
+                        <div class="mycourse-progress-bar">
+                            <div class="mycourse-progress-fill" style="width:@progress%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mycourse-footer">
+                        <div class="mycourse-last-lesson">
+                            Bài gần nhất: (sẽ cập nhật sau)
+                        </div>
+                        <div class="mycourse-actions">
+                            <a href="/courses/learn/@course.Id" class="btn-continue">
+                                Tiếp tục học
+                            </a>
+                            <a href="/courses/details/@course.Id" class="btn-details">
+                                Chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="mycourses-empty">
+            <h3>Bạn chưa đăng ký khóa học nào</h3>
+            <p>Hãy bắt đầu bằng việc chọn một khóa học phù hợp với bạn.</p>
+            <a href="/courses/zoom">Khám phá khóa học</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Lọc theo tab (tất cả / đang học / đã hoàn thành)
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.mycourses-tab');
+            const cards = document.querySelectorAll('.mycourse-card');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.getAttribute('data-filter');
+
+                    cards.forEach(card => {
+                        const status = card.getAttribute('data-status');
+                        if (filter === 'all' || status === filter) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

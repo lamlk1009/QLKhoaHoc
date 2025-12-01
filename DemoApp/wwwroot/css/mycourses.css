@@ -1,0 +1,627 @@
+﻿:root {
+    --mc-bg-page: #f3f6ff;
+    --mc-blue: #2563eb;
+    --mc-indigo: #4f46e5;
+    --mc-purple: #7c3aed;
+    --mc-green: #16a34a;
+    --mc-orange: #f97316;
+    --mc-red: #ef4444;
+    --mc-text-main: #111827;
+    --mc-text-muted: #6b7280;
+    --mc-card-bg: #ffffff;
+    --mc-radius-lg: 24px;
+    --mc-radius-md: 16px;
+    --mc-shadow-soft: 0 15px 40px rgba(15, 23, 42, 0.12);
+}
+
+.mc-page {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #e0edff 0, #f5f7ff 40%, #eef2ff 100%);
+    padding: 2.5rem 1rem 3rem;
+}
+
+.mc-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* header */
+.mc-page-header {
+    margin-bottom: 2rem;
+}
+
+.mc-page-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--mc-text-main);
+    margin-bottom: 0.25rem;
+}
+
+.mc-page-subtitle {
+    color: var(--mc-text-muted);
+}
+
+/* Empty box */
+.mc-empty-box {
+    background: var(--mc-card-bg);
+    border-radius: var(--mc-radius-md);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--mc-shadow-soft);
+    color: var(--mc-text-muted);
+}
+
+/* Buttons */
+.mc-btn-primary,
+.mc-btn-secondary,
+.mc-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.mc-btn-primary {
+    background: linear-gradient(135deg, var(--mc-blue), var(--mc-indigo));
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+}
+
+    .mc-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 15px 40px rgba(37, 99, 235, 0.45);
+    }
+
+.mc-btn-secondary {
+    background: #e5f0ff;
+    color: var(--mc-blue);
+}
+
+    .mc-btn-secondary:hover {
+        background: #d5e4ff;
+    }
+
+.mc-btn-outline {
+    border: 1px solid #cbd5f5;
+    color: var(--mc-blue);
+    background: transparent;
+}
+
+    .mc-btn-outline:hover {
+        background: #e5edff;
+    }
+
+.mc-btn-full {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Course list */
+.mc-course-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+/* Course card (Index) */
+.mc-course-card {
+    background: var(--mc-card-bg);
+    border-radius: var(--mc-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--mc-shadow-soft);
+}
+
+.mc-course-card-header {
+    height: 160px;
+    background: linear-gradient(135deg, var(--mc-blue), var(--mc-indigo));
+    position: relative;
+    overflow: hidden;
+}
+
+.mc-course-card-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.65;
+}
+
+.mc-course-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(99, 102, 241, 0.9));
+    mix-blend-mode: multiply;
+}
+
+.mc-course-level {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.2rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--mc-blue);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.mc-course-card-body {
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.mc-course-category {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--mc-blue);
+    margin-bottom: 0.35rem;
+}
+
+.mc-course-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--mc-text-main);
+    margin-bottom: 0.3rem;
+}
+
+.mc-course-teacher {
+    font-size: 0.9rem;
+    color: var(--mc-text-muted);
+    margin-bottom: 1.1rem;
+}
+
+.mc-course-progress-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--mc-text-muted);
+    margin-bottom: 0.35rem;
+}
+
+.mc-course-progress-percent {
+    font-weight: 700;
+    color: var(--mc-blue);
+}
+
+.mc-progress-bar {
+    width: 100%;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: #e5e7eb;
+    overflow: hidden;
+}
+
+.mc-progress-bar-lg {
+    height: 0.8rem;
+}
+
+.mc-progress-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--mc-blue), var(--mc-indigo));
+    transition: width 0.4s ease;
+}
+
+.mc-course-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.45rem;
+    font-size: 0.85rem;
+    color: var(--mc-text-muted);
+}
+
+.mc-course-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ---- DETAIL PAGE ---- */
+
+/* back link */
+.mc-back-link {
+    border: none;
+    background: none;
+    padding: 0;
+    margin-bottom: 1.25rem;
+    color: var(--mc-blue);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* header card */
+.mc-course-header-card {
+    background: var(--mc-card-bg);
+    border-radius: var(--mc-radius-lg);
+    padding: 1.75rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: stretch;
+    box-shadow: var(--mc-shadow-soft);
+    margin-bottom: 1.5rem;
+}
+
+.mc-course-header-left {
+    flex: 1 1 auto;
+}
+
+.mc-course-header-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--mc-text-main);
+    margin-bottom: 0.5rem;
+}
+
+.mc-course-header-subtitle {
+    font-size: 0.95rem;
+    color: var(--mc-text-muted);
+    margin-bottom: 1rem;
+}
+
+.mc-dot {
+    margin: 0 0.35rem;
+}
+
+.mc-course-header-progress {
+    max-width: 450px;
+}
+
+.mc-course-header-progress-text {
+    font-size: 0.85rem;
+    color: var(--mc-text-muted);
+    margin-top: 0.35rem;
+}
+
+.mc-course-header-badge {
+    background: linear-gradient(135deg, var(--mc-blue), var(--mc-indigo));
+    color: #ffffff;
+    border-radius: 18px;
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-width: 180px;
+}
+
+.mc-course-header-badge-title {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.2rem;
+}
+
+.mc-course-header-badge-value {
+    font-size: 1.9rem;
+    font-weight: 800;
+}
+
+/* tabs */
+.mc-tabs {
+    background: var(--mc-card-bg);
+    border-radius: var(--mc-radius-lg) var(--mc-radius-lg) 0 0;
+    box-shadow: var(--mc-shadow-soft);
+    display: flex;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.mc-tab {
+    flex: 1 1 0;
+    padding: 0.9rem 1rem;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--mc-text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.mc-tab-icon {
+    font-size: 1.1rem;
+}
+
+.mc-tab:hover {
+    color: var(--mc-blue);
+}
+
+.mc-tab.is-active {
+    color: var(--mc-blue);
+    border-bottom-color: var(--mc-blue);
+}
+
+/* tab panels wrapper */
+.mc-tab-panels {
+    background: var(--mc-card-bg);
+    border-radius: 0 0 var(--mc-radius-lg) var(--mc-radius-lg);
+    box-shadow: var(--mc-shadow-soft);
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+/* one panel */
+.mc-tab-panel {
+    display: none;
+}
+
+    .mc-tab-panel.is-active {
+        display: block;
+    }
+
+/* Lessons list */
+.mc-lessons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.mc-lesson-card {
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #cbd5f5;
+    background: #f9fbff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+    .mc-lesson-card:hover {
+        border-color: var(--mc-blue);
+        box-shadow: 0 10px 25px rgba(148, 163, 209, 0.45);
+    }
+
+.mc-lesson-card-completed {
+    background: #ecfdf3;
+    border-color: #bbf7d0;
+}
+
+.mc-lesson-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.mc-lesson-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ffffff;
+    background: var(--mc-blue);
+}
+
+.mc-lesson-card-completed .mc-lesson-icon {
+    background: var(--mc-green);
+}
+
+.mc-lesson-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.mc-lesson-title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+    color: var(--mc-text-main);
+}
+
+.mc-lesson-meta {
+    font-size: 0.85rem;
+    color: var(--mc-text-muted);
+}
+
+.mc-lesson-right {
+    display: flex;
+}
+
+/* Attendance */
+.mc-attendance-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.mc-attendance-summary-card {
+    background: linear-gradient(135deg, var(--mc-indigo), var(--mc-purple));
+    border-radius: var(--mc-radius-md);
+    padding: 1.25rem 1.5rem;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mc-attendance-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.mc-attendance-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.mc-attendance-rate {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.mc-attendance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.mc-attendance-item {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mc-attendance-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.mc-attendance-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+}
+
+.mc-attendance-dot-present {
+    background: var(--mc-green);
+}
+
+.mc-attendance-dot-late {
+    background: #eab308;
+}
+
+.mc-attendance-dot-absent {
+    background: var(--mc-red);
+}
+
+.mc-attendance-lesson {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mc-text-main);
+}
+
+.mc-attendance-date {
+    font-size: 0.8rem;
+    color: var(--mc-text-muted);
+}
+
+.mc-attendance-badge {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.mc-attendance-badge-present {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.mc-attendance-badge-late {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.mc-attendance-badge-absent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Stats cards */
+.mc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.mc-stat-card {
+    border-radius: var(--mc-radius-md);
+    padding: 1.2rem 1.4rem;
+    color: #ffffff;
+}
+
+.mc-stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.mc-stat-icon {
+    font-size: 1.2rem;
+}
+
+.mc-stat-card-value {
+    font-size: 2.1rem;
+    font-weight: 800;
+}
+
+.mc-stat-card-note {
+    font-size: 0.85rem;
+    margin-top: 0.1rem;
+    opacity: 0.9;
+}
+
+.mc-stat-card-green {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.mc-stat-card-blue {
+    background: linear-gradient(135deg, var(--mc-blue), var(--mc-indigo));
+}
+
+.mc-stat-card-orange {
+    background: linear-gradient(135deg, var(--mc-orange), #ea580c);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mc-course-header-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mc-course-header-badge {
+        align-self: stretch;
+        align-items: center;
+    }
+
+    .mc-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+}
+/* Form chứa nút hoàn thành */
+.mc-lesson-right .mc-complete-form {
+    margin-top: 6px;
+    margin-left: 12px;
+    display: inline-block;
+}
+
+/* Nút đánh dấu hoàn thành - tăng độ ưu tiên */
+.mc-lesson-right .mc-complete-form button.mc-btn-complete {
+        border: none !important;
+        background-color: transparent !important;
+        background: transparent !important;
+        color: var(--mc-green) !important;
+        font-size: 13px !important;
+        cursor: pointer;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        font-weight: 500 !important;
+}
+
+.mc-lesson-right .mc-complete-form button.mc-btn-complete:hover {
+            text-decoration: underline !important;
+}

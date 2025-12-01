@@ -1,0 +1,282 @@
+﻿/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== MAIN HEADER ===== */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    box-shadow: var(--header-shadow);
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1200px; /* khớp với home.css */
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* dùng flex, không space-between nữa */
+    padding: 0 2rem;
+    gap: 2rem;
+}
+
+/* ===== LOGO ===== */
+.logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--header-text-color);
+    letter-spacing: -0.5px;
+}
+
+/* ===== NAVIGATION MENU ===== */
+.nav-menu {
+    display: flex;
+    flex: 1; /* chiếm khoảng giữa */
+    justify-content: center; /* căn giữa trong khoảng đó */
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--header-text-color);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+    .nav-link:hover {
+        opacity: 0.8;
+    }
+
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--header-text-color);
+    }
+
+/* ===== HEADER ACTIONS ===== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto; /* đẩy sang mép phải */
+}
+
+/* ===== USER MENU ===== */
+.user-menu {
+    position: relative;
+    display: inline-flex;
+}
+
+.user-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: var(--header-text-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+    .user-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+/* ===== DROPDOWN MENU ===== */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 220px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.user-menu:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+    .dropdown-item:hover {
+        background: #f8f9fa;
+    }
+
+    .dropdown-item.logout {
+        color: #dc3545;
+    }
+
+        .dropdown-item.logout:hover {
+            background: #fff5f5;
+        }
+
+.dropdown-divider {
+    height: 1px;
+    background: #e9ecef;
+    margin: 0.5rem 0;
+}
+
+/* ===== AUTH BUTTONS ===== */
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-login,
+.btn-register {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-login {
+    color: var(--header-text-color);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+    .btn-login:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+.btn-register {
+    color: var(--gradient-start);
+    background: white;
+}
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+/* ===== MOBILE MENU TOGGLE ===== */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+    .mobile-menu-toggle span {
+        width: 25px;
+        height: 3px;
+        background: var(--header-text-color);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu {
+    display: none;
+}
+
+/* ===== MAIN CONTENT SPACING ===== */
+main {
+    margin-top: var(--header-height);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .nav-menu {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none; /* ẩn menu desktop khi mobile */
+        flex: 0;
+    }
+
+    .header-actions .user-menu,
+    .header-actions .auth-buttons {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: var(--header-height);
+        left: -100%;
+        width: 280px;
+        height: calc(100vh - var(--header-height));
+        background: white;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+    }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+    .mobile-nav-link {
+        display: block;
+        padding: 1rem 1.5rem;
+        color: #333;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .mobile-nav-link:hover {
+            background: #f8f9fa;
+            color: var(--gradient-start);
+        }
+}

@@ -1,0 +1,438 @@
+﻿@using System.Text.Json
+@model DemoApp.ViewModels.AdminDashboardViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard - Quản trị hệ thống";
+    ViewBag.ActiveMenu = "dashboard";
+
+    var labels = Model.RegistrationStats.Select(s => s.CourseName);
+    var percents = Model.RegistrationStats.Select(s => Math.Round(s.Percentage, 2));
+    var regs = Model.RegistrationStats.Select(s => s.Registrations);
+    var labelsJson = JsonSerializer.Serialize(labels);
+    var percentsJson = JsonSerializer.Serialize(percents);
+    var regsJson = JsonSerializer.Serialize(regs);
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+    :root {
+        --bg: #f8fafc;
+        --card-bg: rgba(255, 255, 255, 0.9);
+        --text: #1e293b;
+        --text-light: #64748b;
+        --primary: #4361ee;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --shadow: 0 10px 40px rgba(0,0,0,0.08);
+        --radius: 1.5rem;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @@media (prefers-color-scheme: dark) {
+        : root
+
+    {
+        --bg: #0f172a;
+        --card-bg: rgba(15, 23, 42, 0.85);
+        --text: #e2e8f0;
+        --text-light: #94a3b8;
+    }
+
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition: var(--transition);
+    }
+
+    .admin-content {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.8rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .stat-card.green::before {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .stat-card.orange::before {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.18);
+        }
+
+    .stat-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 2.2rem;
+        color: white;
+    }
+
+    .stat-card.blue .stat-icon {
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+    }
+
+    .stat-card.green .stat-icon {
+        background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .stat-card.orange .stat-icon {
+        background: linear-gradient(135deg, #f59e0b, #fb923c);
+    }
+
+    .stat-value {
+        font-size: 3rem;
+        font-weight: 900;
+        margin: 0;
+        line-height: 1;
+        color: var(--text);
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-section {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .chart-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: var(--transition);
+    }
+
+        .chart-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+    .card-header {
+        margin-bottom: 1.8rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        color: var(--text);
+    }
+
+    .card-subtitle {
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 380px;
+    }
+
+    /* Top Courses - Đánh số + huy chương */
+    .top-courses {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .course-item {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        padding: 1.3rem;
+        background: rgba(67,97,238,0.06);
+        border-radius: 1rem;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .course-item:hover {
+            background: rgba(67,97,238,0.12);
+            transform: translateX(8px);
+        }
+
+        .course-item:nth-child(1) {
+            border-left: 5px solid #fbbf24;
+        }
+
+        .course-item:nth-child(2) {
+            border-left: 5px solid #9ca3af;
+        }
+
+        .course-item:nth-child(3) {
+            border-left: 5px solid #fb923c;
+        }
+
+    .course-rank {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.4rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .course-item:nth-child(1) .course-rank {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    }
+
+    .course-item:nth-child(2) .course-rank {
+        background: linear-gradient(135deg, #94a3b8, #6b7280);
+    }
+
+    .course-item:nth-child(3) .course-rank {
+        background: linear-gradient(135deg, #fb923c, #b45309);
+    }
+
+    .course-item:nth-child(n+4) .course-rank {
+        background: var(--primary);
+        font-size: 1.2rem;
+    }
+
+    .course-info h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.4rem;
+        color: var(--text);
+    }
+
+    .course-info p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    @@media (max-width: 1024px) {
+        .charts-section
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    }
+    @@media (max-width: 640px) {
+        .admin-content
+
+    {
+        padding: 1rem;
+    }
+
+        .stat-icon svg {
+            width: 56px;
+            height: 56px;
+            color: white;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        }
+        /* Màu gradient cho từng icon */
+        .stat-card:nth-child(1) .stat-icon svg {
+            color: #a78bfa;
+        }
+
+        .stat-card:nth-child(2) .stat-icon svg {
+            color: #34d399;
+        }
+
+        .stat-card:nth-child(3) .stat-icon svg {
+            color: #fbbf24;
+        }
+
+    .stat-value {
+        font-size: 2.5rem;
+    }
+
+
+    }</style>
+
+<div class="admin-content">
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <!-- Tổng học viên -->
+        <div class="stat-card blue">
+            <div class="stat-icon">
+               
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value">@Model.TotalStudents.ToString("N0")</h3>
+                <p class="stat-label">Tổng học viên</p>
+            </div>
+        </div>
+
+        <!-- Tổng khóa học -->
+        <div class="stat-card green">
+            <div class="stat-icon">
+                
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value">@Model.TotalCourses.ToString("N0")</h3>
+                <p class="stat-label">Tổng khóa học</p>
+            </div>
+        </div>
+
+        <!-- Tổng lượt đăng ký -->
+        <div class="stat-card orange">
+            <div class="stat-icon">
+                
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value">@Model.TotalRegistrations.ToString("N0")</h3>
+                <p class="stat-label">Tổng lượt đăng ký</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts + Top Courses -->
+    <div class="charts-section">
+        <!-- Biểu đồ tỉ lệ đăng ký -->
+        <div class="chart-card">
+            <div class="card-header">
+                <h3 class="card-title">Tỉ lệ đăng ký theo khóa học</h3>
+                <p class="card-subtitle">Phân bố học viên trên từng khóa học</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="registrationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top khóa học - Đánh số thứ tự -->
+        <div class="chart-card">
+            <div class="card-header">
+                <h3 class="card-title">Bảng xếp hạng khóa học</h3>
+                <p class="card-subtitle">Top khóa học được yêu thích nhất</p>
+            </div>
+            <div class="top-courses">
+                @if (Model.RegistrationStats.Any())
+                {
+                    var rank = 1;
+                    foreach (var course in Model.RegistrationStats.OrderByDescending(x => x.Registrations).Take(10))
+                    {
+                        <div class="course-item">
+                            <div class="course-rank">
+                                @(rank == 1 ? "1" : rank == 2 ? "2" : rank == 3 ? "3" : rank.ToString())
+                            </div>
+                            <div class="course-info">
+                                <h4>@course.CourseName</h4>
+                                <p>@course.Registrations.ToString("N0") học viên (@course.Percentage:0.##%)</p>
+                            </div>
+                        </div>
+                        rank++;
+                    }
+                }
+                else
+                {
+                    <p style="text-align:center;color:var(--text-light);padding:2rem;">Chưa có dữ liệu đăng ký</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = @Html.Raw(labelsJson);
+        const percents = @Html.Raw(percentsJson);
+        const registrations = @Html.Raw(regsJson);
+
+        new Chart(document.getElementById('registrationChart'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tỉ lệ đăng ký',
+                    data: percents,
+                    backgroundColor: [
+                        '#4361ee', '#7c3aed', '#ec4899', '#f59e0b', '#10b981',
+                        '#06b6d4', '#8b5cf6', '#f43f5e', '#14b8a6', '#f97316'
+                    ],
+                    borderColor: 'rgba(255,255,255,0.3)',
+                    borderWidth: 3,
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, font: { size: 13 } } },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const label = ctx.label || '';
+                                const value = ctx.parsed;
+                                const reg = registrations[ctx.dataIndex];
+                                const percent = value.toFixed(1);
+                                return `${label}: ${reg.toLocaleString()} học viên (${percent}%)`;
+                            }
+                        }
+                    }
+                },
+                animation: { duration: 2000, easing: 'easeOutQuart' }
+            }
+        });
+    </script>
+}

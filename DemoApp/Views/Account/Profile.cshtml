@@ -1,0 +1,90 @@
+﻿@model DemoApp.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/Profile.css" />
+<html>
+<body>
+<div class="profile-grid">
+    <div class="profile-sidebar">
+        <div class="profile-avatar">
+            @Model.FullName.Substring(0, 1).ToUpper()
+        </div>
+        <h3 class="profile-name">@Model.FullName</h3>
+        <p class="profile-role">@Model.RoleName</p>
+
+
+        <ul class="profile-menu">
+            <li><a href="#info-section" class="active">📋 Thông tin cá nhân</a></li>
+            <li><a asp-action="ChangePassword">🔒 Đổi mật khẩu</a></li>
+            <li><a asp-controller="Courses" asp-action="Index">📚 Khóa học của tôi</a></li>
+            <li><a href="#">🎓 Chứng chỉ</a></li>
+            <li><a href="#">⚙️ Cài đặt</a></li>
+        </ul>
+    </div>
+
+
+    <div class="profile-main" id="info-section">
+        <h2 class="section-title">Thông tin cá nhân</h2>
+
+
+        <form asp-action="UpdateProfile" method="post">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="Username" />
+            <input type="hidden" asp-for="RoleName" />
+
+
+            <div class="info-grid">
+                <div class="form-group">
+                    <label asp-for="Username" class="info-label">Tên đăng nhập</label>
+                    <input asp-for="Username" class="form-control" disabled />
+                    <small style="color: #64748b; font-size: 0.85rem;">Không thể thay đổi tên đăng nhập</small>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="Email" class="info-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="FullName" class="info-label"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="NumberPhone" class="info-label"></label>
+                    <input asp-for="NumberPhone" class="form-control" />
+                    <span asp-validation-for="NumberPhone" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="Address" class="info-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-actions">
+               <a asp-action="UpdateProfile" asp-controller="Account">
+                  <button type="submit" class="btn-primary">💾 Lưu thay đổi</button>
+               </a>
+                <button type="reset" class="btn-secondary">↺ Đặt lại</button>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+</body>
+</html>

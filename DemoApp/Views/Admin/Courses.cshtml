@@ -1,0 +1,313 @@
+﻿@model IEnumerable<DemoApp.Models.KhoaHoc>
+@{
+    ViewData["Title"] = "Quản lý khóa học";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "courses";
+
+    var totalCourses = Model?.Count() ?? 0;
+    var activeCourses = Model?.Count(k => k.TrangThai == "HoatDong") ?? 0;
+    var draftCourses = Model?.Count(k => k.TrangThai == "BanNhap") ?? 0;
+    var hiddenCourses = Model?.Count(k => k.TrangThai == "DaAn") ?? 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --bg: #fafbff;
+        --card: #ffffff;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --primary: #6366f1;
+        --radius: 1.25rem;
+        --transition: all 0.35s ease;
+    }
+
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    
+    /* Giới hạn chiều rộng tối đa để không tràn màn hình */
+    .admin-content { 
+        padding: 1.5rem; 
+        max-width: 1380px; /* vừa đẹp trên 1366px và 1440px */
+        margin: 0 auto; 
+    }
+
+    /* Header */
+    .page-header-section {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .page-main-title {
+        font-size: 2.3rem; font-weight: 800; margin:0;
+        background: linear-gradient(120deg, #6366f1, #a78bfa);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .btn-add-new {
+        display: inline-flex; align-items: center; gap: 0.7rem;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white; padding: 0.9rem 1.8rem; border-radius: 1rem;
+        font-weight: 600; text-decoration: none; box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+        transition: var(--transition);
+    }
+    .btn-add-new:hover { transform: translateY(-4px); }
+
+    /* Filter Bar - gọn lại */
+    .filter-search-bar {
+        display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+        padding: 1.4rem; background: var(--card); border-radius: var(--radius);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .search-wrapper { flex: 1; min-width: 280px; position: relative; }
+    .search-wrapper svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+    .search-input-modern {
+        width: 100%; padding: 0.95rem 1rem 0.95rem 3.2rem;
+        border: 2px solid #e2e8f0; border-radius: 1rem; font-size: 0.98rem;
+        transition: var(--transition);
+    }
+    .search-input-modern:focus { outline:none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99,102,241,0.15); }
+
+    .filter-controls { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .filter-dropdown {
+        padding: 0.95rem 1.3rem; border: 2px solid #e2e8f0;
+        border-radius: 1rem; background: white; font-size: 0.98rem;
+        min-width: 160px;
+    }
+
+    /* Bảng - thu nhỏ vừa đủ, không tràn */
+    .table-container {
+        background: var(--card); border-radius: var(--radius);
+        overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid var(--border);
+        overflow-x: auto; /* vẫn cho scroll ngang trên mobile nếu cần, nhưng hiếm khi xảy ra */
+    }
+
+    .courses-table {
+        width: 100%; min-width: 1000px; /* đảm bảo không co quá nhỏ */
+        border-collapse: collapse;
+    }
+    .courses-table thead {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+    }
+    .courses-table th, .courses-table td {
+        padding: 1.1rem 0.9rem;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .courses-table th:first-child, .courses-table td:first-child { text-align: left; padding-left: 1.5rem; }
+    .courses-table th:last-child, .courses-table td:last-child { text-align: center; }
+
+    /* Ảnh nhỏ gọn hơn */
+    .table-course-image, .table-course-placeholder {
+        width: 68px; height: 48px; border-radius: 0.9rem; object-fit: cover;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .table-course-placeholder {
+        background: linear-gradient(135deg, #e0e7ff, #c4b5fd);
+        color: #6366f1; font-weight: 900; font-size: 1.5rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Cột tên khóa học - gọn và đẹp */
+    .course-name-cell { text-align: left; max-width: 280px; }
+    .course-name {
+        font-weight: 700; font-size: 1.05rem; display: block;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .course-desc {
+        font-size: 0.88rem; color: var(--text-light); margin-top: 0.3rem;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Badge nhỏ gọn */
+    .category-badge, .level-badge, .status-badge {
+        padding: 0.45rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+        min-width: 80px; display: inline-block;
+    }
+
+    /* Nút thao tác nhỏ lại */
+    .action-buttons { gap: 0.8rem; }
+    .btn-action-text {
+        padding: 0.55rem 1.2rem; border-radius: 0.8rem; font-size: 0.92rem; font-weight: 600;
+    }
+
+    /* Hover row mượt */
+    .courses-table tbody tr:hover {
+        background: rgba(99,102,241,0.06);
+        transform: translateY(-2px);
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center; padding: 4rem 2rem;
+    }
+    .empty-state h3 { font-size: 1.8rem; margin: 1rem 0; }
+
+    /* Responsive hoàn hảo */
+    @@media (max-width: 1200px) {
+        .filter-controls { gap: 0.8rem; }
+        .filter-dropdown { min-width: 140px; }
+    }
+</style>
+
+<!-- Giữ nguyên phần HTML như cũ, chỉ gọn hơn một chút -->
+<div class="page-header-section">
+    <div>
+        <h1 class="page-main-title">Quản lý khóa học</h1>
+        <p style="color:#64748b;margin-top:0.5rem;">Tổng: @totalCourses khóa (@activeCourses hoạt động)</p>
+    </div>
+    <a href="/admin/courses/create" class="btn-add-new">
+        Thêm khóa học
+    </a>
+</div>
+
+<div class="filter-search-bar">
+    <div class="search-wrapper">
+        <input type="text" placeholder="Tìm tên, mã khóa học..." class="search-input-modern" id="searchInput" />
+    </div>
+    <div class="filter-controls">
+        <select class="filter-dropdown" id="categoryFilter">
+            <option value="">Tất cả danh mục</option>
+            @if (ViewBag.DanhMucList != null)
+            {
+                foreach (var dm in ViewBag.DanhMucList as IEnumerable<DemoApp.Models.DanhMuc>)
+                {
+                    <option value="@dm.Id">@dm.TenDanhMuc</option>
+                }
+            }
+        </select>
+        <select class="filter-dropdown" id="statusFilter">
+            <option value="">Trạng thái</option>
+            <option value="HoatDong">Hoạt động (@activeCourses)</option>
+            <option value="BanNhap">Bản nháp (@draftCourses)</option>
+            <option value="DaAn">Đã ẩn (@hiddenCourses)</option>
+        </select>
+        <select class="filter-dropdown" id="levelFilter">
+            <option value="">Cấp độ</option>
+            <option value="CoBan">Cơ bản</option>
+            <option value="TrungCap">Trung cấp</option>
+            <option value="NangCao">Nâng cao</option>
+        </select>
+    </div>
+</div>
+
+<div class="table-container">
+    @if (Model != null && Model.Any())
+    {
+        <table class="courses-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Mã</th>
+                    <th>Tên khóa học</th>
+                    <th>Danh mục</th>
+                    <th>Cấp độ</th>
+                    <th>Học viên</th>
+                    <th>Trạng thái</th>
+                    
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var k in Model)
+                {
+                    var stt = k.TrangThai switch { "HoatDong" => "active", "BanNhap" => "draft", "DaAn" => "inactive", _ => "draft" };
+                    var txt = k.TrangThai switch { "HoatDong" => "Hoạt động", "BanNhap" => "Bản nháp", "DaAn" => "Đã ẩn", _ => k.TrangThai };
+                    var lvl = k.CapDo switch { "CoBan" => "Cơ bản", "TrungCap" => "Trung cấp", "NangCao" => "Nâng cao", _ => "-" };
+                    var cat = k.DanhMuc?.TenDanhMuc ?? "Chưa có";
+
+                    <tr class="course-row"
+                        data-category="@(k.DanhMucId ?? 0)"
+                        data-status="@k.TrangThai"
+                        data-level="@k.CapDo"
+                        data-name="@(k.TenKhoaHoc?.ToLower() ?? "")">
+                        <td>
+                            @if (!string.IsNullOrEmpty(k.AnhBia))
+                            {
+                                <img src="@k.AnhBia" class="table-course-image" />
+                            }
+                            else
+                            {
+                                <div class="table-course-placeholder">KH</div>
+                            }
+                        </td>
+                        <td><strong>@k.MaKhoaHoc</strong></td>
+                        <td class="course-name-cell">
+                            <span class="course-name">@k.TenKhoaHoc</span>
+                            @if (!string.IsNullOrEmpty(k.MoTaNgan))
+                            {
+                                <span class="course-desc">@k.MoTaNgan</span>
+                            }
+                        </td>
+                        <td><span class="category-badge">@cat</span></td>
+                        <td><span class="level-badge">@lvl</span></td>
+                        <td><strong>@(k.DangKyKhoaHoc?.Count ?? 0)</strong></td>
+                        <td><span class="status-badge @stt">@txt</span></td>
+                       
+                        <td>
+                            <div class="action-buttons">
+                                <button href="/admin/courses/edit/@k.Id" class="btn-action-text edit-btn">Sửa</button>
+                                <button type="button" class="btn-action-text delete-btn"
+                                        onclick="deleteCourse(@k.Id, '@k.TenKhoaHoc')">
+                                    Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">
+            <h3>Chưa có khóa học nào</h3>
+            <p>Tạo ngay khóa học đầu tiên nào!</p>
+            <a href="/admin/courses/create" class="btn-add-new">Thêm khóa học</a>
+        </div>
+    }
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function deleteCourse(id, name) {
+            if (confirm(`Xóa khóa học "${name}"?\nHành động này không thể hoàn tác!`)) {
+                fetch(`/admin/courses/delete/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(r => r.ok ? (alert('Đã xóa!'), location.reload()) : alert('Lỗi khi xóa'))
+                .catch(() => alert('Lỗi kết nối'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const search = document.getElementById('searchInput');
+            const cat = document.getElementById('categoryFilter');
+            const status = document.getElementById('statusFilter');
+            const level = document.getElementById('levelFilter');
+            const rows = document.querySelectorAll('.course-row');
+
+            const filter = () => {
+                const q = search.value.toLowerCase().trim();
+                rows.forEach(r => {
+                    const show =
+                        r.dataset.name.includes(q) &&
+                        (!cat.value || r.dataset.category === cat.value) &&
+                        (!status.value || r.dataset.status === status.value) &&
+                        (!level.value || r.dataset.level === level.value);
+                    r.style.display = show ? '' : 'none';
+                });
+            };
+
+            [search, cat, status, level].forEach(el => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', filter));
+        });
+    </script>
+}

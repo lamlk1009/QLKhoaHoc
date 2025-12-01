@@ -1,0 +1,64 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+<h2 class="section-title">Báo cáo doanh thu</h2>
+
+<div class="charts-section" style="margin-bottom:2rem;">
+    <div class="chart-card">
+        <div class="card-header">
+            <h3 class="card-title">Doanh thu theo tháng</h3>
+            <select class="year-select">
+                <option>2024</option>
+                <option>2023</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="revenueByMonth"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="card-header">
+            <h3 class="card-title">Tỉ lệ doanh thu theo danh mục</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="revenueByCategory"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="activity-section">
+    <div class="section-header">
+        <h3 class="section-title">Tóm tắt</h3>
+    </div>
+    <p class="activity-text">
+        Doanh thu tháng này tăng <strong>18.2%</strong> so với tháng trước.
+        Các khóa học Front-End và DSA chiếm tỷ trọng lớn nhất.
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        // ví dụ: nếu bạn muốn tự vẽ chart khác với admin-dashboard.js
+        // nhớ check tồn tại element rồi mới vẽ
+        (function(){
+            if (!window.Chart) return;
+
+            var ctx1 = document.getElementById('revenueByMonth');
+            if (ctx1) {
+                new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: ['Th1','Th2','Th3','Th4','Th5','Th6','Th7','Th8','Th9','Th10','Th11','Th12'],
+                        datasets: [{
+                            label: 'Doanh thu (triệu)',
+                            data: [80,90,78,110,125,96,138,140,130,155,148,170]
+                        }]
+                    }
+                });
+            }
+        })();
+    </script>
+}

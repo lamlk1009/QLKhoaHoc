@@ -1,0 +1,76 @@
+﻿@model DemoApp.Models.KhoaHoc
+
+@{
+    ViewData["Title"] = Model.TenKhoaHoc;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/ctkh.css" asp-append-version="true" />
+
+<div class="page-title">
+    <h1>@Model.TenKhoaHoc</h1>
+    <p class="page-subtitle">@Model.MoTaNgan</p>
+</div>
+
+<div class="container">
+    <div class="course-main">
+
+
+        <div class="course-banner">
+            <img src="~/images/@Model.AnhBia" alt="@Model.TenKhoaHoc" />
+        </div>
+
+        <div class="course-content">
+            <h2 class="course-title">@Model.TenKhoaHoc</h2>
+
+            <div class="course-stats">
+                <div class="stat-item">
+                    <div class="stat-label">📚 Số bài giảng</div>
+                    <div class="stat-value">@Model.BaiHoc.Count bài học</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label">💰 Học phí</div>
+                    <div class="stat-value">@Model.GiaTien.ToString("N0") đ</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label">📅 Ngày tạo</div>
+                    <div class="stat-value">@Model.NgayTao.ToString("dd/MM/yyyy")</div>
+                </div>
+            </div>
+
+            <div class="course-description">
+                <h3>Giới thiệu về khóa học</h3>
+                <p>@Model.MoTaNgan</p>
+            </div>
+
+            <div class="action-section">
+                <div class="action-buttons">
+                    <button class="btn-enroll">🚀 ĐĂNG KÝ NGAY</button>
+                    <button class="btn-cart">🛒</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lessons-sidebar">
+        <div class="sidebar-header">
+            <h2>Nội dung khóa học</h2>
+            <p class="lesson-count">@Model.BaiHoc.Count bài học</p>
+        </div>
+
+        <div class="lessons-list">
+            @foreach (var bai in Model.BaiHoc)
+            {
+                <div class="lesson-item">
+                    <div class="lesson-header">
+                        <span class="lesson-number">Bài @bai.ThuTuHienThi</span>
+                        <span class="lesson-duration">⏱️ 2h</span>
+                    </div>
+                    <div class="lesson-title">@bai.TenBaiHoc</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

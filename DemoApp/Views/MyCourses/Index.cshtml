@@ -1,0 +1,319 @@
+﻿@model IEnumerable<DemoApp.ViewModels.MyCourseItemViewModel>
+
+@{
+    ViewData["Title"] = "Khóa học của tôi";
+    var totalCourses = Model?.Count() ?? 0;
+}
+
+@section Styles {
+    <style>
+        /* ====================== MY COURSES – TÔNG SÁNG ====================== */
+        .mc-page-light {
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .mc-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .mc-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .mc-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 12px;
+        }
+
+        .mc-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        /* Empty state */
+        .mc-empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .mc-empty-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .mc-empty-text {
+            font-size: 1.25rem;
+            color: #475569;
+            margin-bottom: 24px;
+        }
+
+        /* Grid */
+        .mc-course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px;
+        }
+
+        /* Card */
+        .mc-course-card-light {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .mc-course-card-light:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            }
+
+        /* Thumbnail */
+        .mc-card-thumb-wrapper {
+            position: relative;
+            height: 180px;
+        }
+
+        .mc-card-thumb, .mc-card-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mc-card-thumb-placeholder {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        }
+
+        .mc-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent 50%);
+        }
+
+        .mc-level-badge {
+            position: absolute;
+            bottom: 12px;
+            left: 16px;
+            background: rgba(255,255,255,0.95);
+            color: #1e293b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Body */
+        .mc-card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mc-category-tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .mc-course-name {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 8px;
+            line-height: 1.3;
+        }
+
+        .mc-start-date {
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        /* Progress */
+        .mc-progress-section {
+            margin: 16px 0;
+            flex-grow: 1;
+        }
+
+        .mc-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .mc-progress-label {
+            color: #64748b;
+        }
+
+        .mc-progress-value {
+            font-weight: 600;
+            color: #0ea5e9;
+        }
+
+        .mc-progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .mc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #22d3ee);
+            border-radius: 4px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mc-progress-meta {
+            margin-top: 8px;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        /* Buttons */
+        .mc-btn-primary {
+            margin-top: auto;
+            display: block;
+            text-align: center;
+            background: #0ea5e9;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+            .mc-btn-primary:hover {
+                background: #0284c7;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(14,165,233,0.3);
+            }
+
+        .mc-btn-outline {
+            display: inline-block;
+            padding: 12px 28px;
+            border: 2px solid #0ea5e9;
+            color: #0ea5e9;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+            .mc-btn-outline:hover {
+                background: #0ea5e9;
+                color: white;
+            }
+    </style>
+}
+
+<section class="mc-page-light">
+    <div class="mc-container">
+
+        <!-- Header -->
+        <header class="mc-header">
+            <h1 class="mc-title">Khóa học của tôi</h1>
+            <p class="mc-subtitle">
+                Bạn đã đăng ký <strong>@totalCourses</strong> khóa học
+            </p>
+        </header>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="mc-empty-state">
+                <div class="mc-empty-icon">📚</div>
+                <p class="mc-empty-text">Bạn chưa đăng ký khóa học nào.</p>
+                <a href="/courses" class="mc-btn-outline">Xem danh sách khóa học →</a>
+            </div>
+        }
+        else
+        {
+            <div class="mc-course-grid">
+                @foreach (var course in Model)
+                {
+                    var completed = course.TotalLessons > 0
+                    ? (int)Math.Round(course.TotalLessons * (course.ProgressPercent / 100.0))
+                    : 0;
+
+                    <article class="mc-course-card-light">
+                        <!-- Thumbnail + overlay -->
+                        <div class="mc-card-thumb-wrapper">
+                            @if (!string.IsNullOrEmpty(course.ThumbnailUrl))
+                            {
+                                <img src="@course.ThumbnailUrl" alt="@course.CourseTitle" class="mc-card-thumb" />
+                            }
+                            else
+                            {
+                                <div class="mc-card-thumb-placeholder"></div>
+                            }
+
+                            <div class="mc-card-overlay"></div>
+
+                            <span class="mc-level-badge">@course.Level</span>
+                        </div>
+
+                        <!-- Nội dung -->
+                        <div class="mc-card-body">
+                            @if (!string.IsNullOrEmpty(course.ShortDescription))
+                            {
+                                <span class="mc-category-tag">@course.ShortDescription</span>
+                            }
+
+                            <h3 class="mc-course-name">@course.CourseTitle</h3>
+
+                            @if (course.StartDate.HasValue)
+                            {
+                                <p class="mc-start-date">
+                                    <small>B, cơ bản>⌚ Bắt đầu: @course.StartDate.Value:ToString("dd/MM/yyyy")</small>
+                                </p>
+                            }
+
+                            <!-- Progress -->
+                            <div class="mc-progress-section">
+                                <div class="mc-progress-header">
+                                    <span class="mc-progress-label">Tiến độ</span>
+                                    <span class="mc-progress-value">@course.ProgressPercent%</span>
+                                </div>
+                                <div class="mc-progress-bar">
+                                    <div class="mc-progress-fill" style="width: @course.ProgressPercent%;"></div>
+                                </div>
+                                <div class="mc-progress-meta">
+                                    <span>@completed / @course.TotalLessons bài đã học</span>
+                                </div>
+                            </div>
+
+                            <a asp-controller="MyCourses"
+                               asp-action="Details"
+                               asp-route-id="@course.CourseId"
+                               class="mc-btn-primary">
+                                Tiếp tục học →
+                            </a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</section>

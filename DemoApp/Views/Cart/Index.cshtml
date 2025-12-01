@@ -1,0 +1,79 @@
+﻿@model DemoApp.Models.Cart
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/cart.css" />
+}
+<section class="cart-page">
+    <div class="container">
+        <h1 class="page-title" style="text-align: center;">Giỏ hàng của bạn</h1>
+
+        @if (Model.Items == null || !Model.Items.Any())
+        {
+            <div class="alert alert-info mt-3">
+                Hiện tại bạn chưa có khóa học nào trong giỏ.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive mt-3">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Khóa học</th>
+                            <th class="text-end">Giá</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.KhoaHoc.TenKhoaHoc</strong>
+                                    <div class="text-muted small">
+                                        Thêm lúc: @item.AddedAt.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    @String.Format("{0:N0} đ", item.Price)
+                                </td>
+                                <td class="text-center">
+                                    <form asp-action="Remove" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@item.CartItemId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Xóa
+                                        </button>
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <form asp-action="Clear" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-secondary">
+                            Xóa toàn bộ giỏ hàng
+                        </button>
+                    </form>
+                </div>
+
+                <div class="text-end">
+                    <div class="fw-bold fs-5">
+                        Tổng: @String.Format("{0:N0} đ", Model.TotalPrice)
+                    </div>
+                    <a asp-action="Checkout" class="btn btn-primary mt-2">
+                        Đăng ký ngay
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>

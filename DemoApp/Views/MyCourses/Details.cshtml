@@ -1,0 +1,824 @@
+﻿@model DemoApp.ViewModels.CourseLearningViewModel
+@{
+    ViewData["Title"] = Model.KhoaHoc?.TenKhoaHoc ?? "Khóa học";
+    var percent = Model.ProgressPercent;
+    int activeLessonId = ViewBag.ActiveLessonId as int? ?? 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary: #4361ee;
+        --primary-light: #eef1ff;
+        --primary-hover: #3a56d4;
+        --success: #10b981;
+        --success-light: #ecfdf5;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --radius-lg: 1.5rem;
+        --radius-md: 1rem;
+        --radius-sm: 0.75rem;
+        --shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
+        --shadow-md: 0 10px 30px rgba(0,0,0,0.1);
+        --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: #f8fafc;
+        color: var(--gray-800);
+        line-height: 1.6;
+    }
+
+    .elite-learning {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 2rem 0;
+    }
+
+    .elite-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Back Button */
+    .elite-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--gray-600);
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-md);
+        background: white;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+    }
+
+        .elite-back:hover {
+            color: var(--primary);
+            transform: translateX(-6px);
+            box-shadow: var(--shadow-md);
+        }
+
+    /* Hero */
+    .elite-hero {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 3.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-lg);
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 4rem;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .elite-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle at top right, rgba(67,97,238,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .elite-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .elite-hero p {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+    .elite-progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .elite-progress-label {
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .elite-progress-percent {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--primary);
+    }
+
+    .elite-progress-main {
+        height: 16px;
+        background: var(--gray-100);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .elite-progress-fill {
+        height: 100%;
+        width: @percent %;
+        background: linear-gradient(90deg, var(--primary), #7209b7);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        transition: width 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .elite-progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+    @@keyframes shimmer {
+        100%
+
+    {
+        transform: translateX(100%);
+    }
+
+    }
+
+    .elite-progress-meta {
+        color: var(--gray-600);
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    /* Circular Progress */
+    .elite-circular {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+    }
+
+        .elite-circular svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+    .elite-circle-bg {
+        fill: none;
+        stroke: var(--gray-200);
+        stroke-width: 14;
+    }
+
+    .elite-circle-fg {
+        fill: none;
+        stroke: url(#gradient);
+        stroke-width: 14;
+        stroke-linecap: round;
+        stroke-dasharray: @(percent * 2.827) 282.7;
+        transition: stroke-dasharray 2s ease;
+    }
+
+    .elite-circle-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: var(--gray-900);
+    }
+
+        .elite-circle-text small {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--gray-500);
+        }
+
+    .elite-mini-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .elite-mini-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .elite-mini-label {
+        font-size: 0.95rem;
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+
+    /* Tabs */
+    .elite-tabs {
+        display: flex;
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 0.75rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    .elite-tab {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--gray-600);
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+        .elite-tab i {
+            font-size: 1.3rem;
+        }
+
+        .elite-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 25px rgba(67,97,238,0.3);
+            transform: translateY(-4px);
+        }
+
+    .elite-panel {
+        display: none;
+        animation: fadeInUp 0.6s ease;
+    }
+
+        .elite-panel.active {
+            display: block;
+        }
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+
+    }
+
+    /* Curriculum */
+    .elite-curriculum {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .elite-lesson {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--gray-100);
+        transition: all 0.4s ease;
+    }
+
+        .elite-lesson:hover {
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            margin: 0 -2rem;
+            padding: 1.5rem 2rem;
+            transform: translateY(-4px);
+        }
+
+        .elite-lesson.active {
+            background: linear-gradient(90deg, #eef1ff 0%, transparent 100%);
+            border-left: 6px solid var(--primary);
+            padding-left: 1.7rem !important;
+            margin-left: -2.1rem;
+        }
+
+        .elite-lesson.completed .elite-lesson-title {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+    .elite-lesson-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex: 1;
+    }
+
+    .elite-lesson-index {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        color: var(--gray-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        flex-shrink: 0;
+        transition: all 0.3s;
+    }
+
+    .elite-lesson.completed .elite-lesson-index {
+        background: var(--success);
+        color: white;
+    }
+
+    .elite-lesson-info h3 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+        color: var(--gray-800);
+    }
+
+    .elite-lesson-duration {
+        color: var(--gray-500);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .elite-lesson-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    /* Nút chính */
+    .elite-btn {
+        padding: 0.85rem 1.75rem;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .elite-btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+        .elite-btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(67,97,238,0.4);
+        }
+
+    .elite-btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+        .elite-btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+    /* Form nhỏ gọn, đẹp */
+    .elite-complete-form, .elite-checkin-form {
+        display: inline-block;
+        margin: 0;
+    }
+
+    .elite-btn-complete, .elite-btn-checkin {
+        background: transparent;
+        border: 2px solid var(--success);
+        color: var(--success);
+        font-weight: 700;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+        .elite-btn-complete:hover, .elite-btn-checkin:hover {
+            background: var(--success);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+
+    .elite-btn-checkin {
+        border-color: #8b5cf6;
+        color: #8b5cf6;
+    }
+
+        .elite-btn-checkin:hover {
+            background: #8b5cf6;
+            box-shadow: 0 6px 20px rgba(139,92,246,0.4);
+        }
+
+    /* Attendance & Stats */
+    .elite-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .elite-attendance-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem;
+        border-radius: var(--radius-lg);
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .elite-big-number {
+        font-size: 5rem;
+        font-weight: 900;
+        margin: 1rem 0;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .elite-attendance-list {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .elite-att-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .elite-badge {
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+        .elite-badge.present {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .elite-badge.late {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .elite-badge.absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .elite-badge.none {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+    .elite-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .elite-stat-card {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: var(--radius-lg);
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.4s ease;
+    }
+
+        .elite-stat-card:hover {
+            transform: translateY(-16px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+        }
+
+    .elite-stat-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--primary), #7209b7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .elite-stat-value {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--gray-900);
+        margin: 1rem 0;
+    }
+
+    .elite-stat-label {
+        font-size: 1.2rem;
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+
+    .elite-empty {
+        text-align: center;
+        padding: 6rem 2rem;
+        color: var(--gray-500);
+        font-size: 1.3rem;
+    }
+
+    @@media (max-width: 1024px) {
+        .elite-hero
+
+    {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .elite-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    }
+    @@media (max-width: 640px) {
+        .elite-lesson-actions
+
+    {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.75rem;
+    }
+
+    .elite-btn, .elite-btn-complete, .elite-btn-checkin {
+        width: 100%;
+        justify-content: center;
+    }
+
+    }</style>
+
+<svg width="0" height="0">
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4361ee" />
+            <stop offset="100%" stop-color="#7209b7" />
+        </linearGradient>
+    </defs>
+</svg>
+
+<section class="elite-learning">
+    <div class="elite-container">
+
+        <a href="@Url.Action("Index", "MyCourses")" class="elite-back">
+            Quay lại danh sách khóa học
+        </a>
+
+        <!-- Hero -->
+        <div class="elite-hero">
+            <div>
+                <h1>@Model.KhoaHoc?.TenKhoaHoc</h1>
+                <p>@Model.KhoaHoc?.MoTaNgan</p>
+
+                <div class="elite-progress-header">
+                    <span class="elite-progress-label">Tiến độ hoàn thành</span>
+                    <span class="elite-progress-percent">@percent%</span>
+                </div>
+                <div class="elite-progress-main">
+                    <div class="elite-progress-fill"></div>
+                </div>
+                <div class="elite-progress-meta">
+                    <strong>@Model.CompletedLessons</strong> trong số <strong>@Model.TotalLessons</strong> bài học đã hoàn thành
+                </div>
+            </div>
+
+            <div class="elite-circular">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" class="elite-circle-bg" />
+                    <circle cx="50" cy="50" r="45" class="elite-circle-fg" />
+                </svg>
+                <div class="elite-circle-text">@percent<small>%</small></div>
+                <div class="elite-mini-stats">
+                    <div>
+                        <span class="elite-mini-number">@Model.TotalLessons</span>
+                        <span class="elite-mini-label">Bài học</span>
+                    </div>
+                    <div>
+                        <span class="elite-mini-number">@(Model.Stats?.AttendanceRate ?? 0)%</span>
+                        <span class="elite-mini-label">Điểm danh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="elite-tabs">
+            <button class="elite-tab active" data-tab="lessons">Chương trình học</button>
+            <button class="elite-tab" data-tab="attendance">Điểm danh</button>
+            <button class="elite-tab" data-tab="stats">Tổng quan</button>
+        </div>
+
+        <!-- Panels -->
+        <div class="elite-panels">
+            <!-- Curriculum -->
+            <div class="elite-panel active" data-tab="lessons">
+                <div class="elite-curriculum">
+                    @if (!Model.Lessons?.Any() ?? true)
+                    {
+                        <div class="elite-empty">Chưa có bài học nào trong khóa học này.</div>
+                    }
+                    else
+                    {
+                        int index = 1;
+                        bool prevCompleted = true;
+                        foreach (var l in Model.Lessons!)
+                        {
+                            bool completed = Model.CompletedLessonIds?.Contains(l.Id) == true;
+                            bool canComplete = !completed && (index == 1 || prevCompleted) && l.Id == activeLessonId;
+                            bool isActive = l.Id == activeLessonId;
+
+                            <div class="elite-lesson @(completed ? "completed" : "") @(isActive ? "active" : "")">
+                                <div class="elite-lesson-left">
+                                    <div class="elite-lesson-index">
+                                        @(completed ? "Check" : index.ToString())
+                                    </div>
+                                    <div class="elite-lesson-info">
+                                        <h3 class="elite-lesson-title">@l.TenBaiHoc</h3>
+                                        <div class="elite-lesson-duration">
+                                            Time @(l.ThoiLuong > 0 ? $"{l.ThoiLuong} phút" : "~45 phút")
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="elite-lesson-actions">
+                                    <button onclick="startLesson(@l.Id, '@l.DuongDanNoiDung')"
+                                            class="elite-btn @(completed ? "elite-btn-outline" : "elite-btn-primary")">
+                                        @(completed ? "Xem lại" : "Học ngay")
+                                    </button>
+
+                                    @if (canComplete)
+                                    {
+                                        <form asp-action="CompleteLesson" asp-controller="MyCourses" method="post" class="elite-complete-form">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="courseId" value="@Model.KhoaHoc!.Id" />
+                                            <input type="hidden" name="lessonId" value="@l.Id" />
+                                            <button type="submit" class="elite-btn-complete">
+                                                Hoàn thành
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+
+                            prevCompleted = completed;
+                            index++;
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Attendance -->
+            <div class="elite-panel" data-tab="attendance">
+                <div class="elite-grid-2">
+                    <div class="elite-attendance-card">
+                        <h3>Tỷ lệ điểm danh</h3>
+                        <div class="elite-big-number">@(Model.Stats?.AttendanceRate ?? 0)%</div>
+                        <p>Hiện diện đầy đủ – Chìa khóa thành công!</p>
+                    </div>
+
+                    <div class="elite-attendance-list">
+                        @if (!Model.Sessions?.Any() ?? true)
+                        {
+                            <div class="elite-empty">Chưa có buổi học nào được lên lịch.</div>
+                        }
+                        else
+                        {
+                            foreach (var s in Model.Sessions!)
+                            {
+                                var att = Model.Attendances?.FirstOrDefault(x => x.BuoiHocId == s.Id);
+                                var status = att?.TrangThai ?? "none";
+                                var statusText = status == "present" ? "Có mặt" :
+                                status == "late" ? "Muộn" :
+                                status == "absent" ? "Vắng" : "Chưa điểm danh";
+
+                                <div class="elite-att-item">
+                                    <div>
+                                        <div style="font-weight:600; margin-bottom:0.5rem;">@s.TenBuoiHoc</div>
+                                        <div style="color:var(--gray-500);">
+                                            @(att?.NgayDiemDanh.ToString("dd/MM/yyyy") ?? "Chưa diễn ra")
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:1rem;">
+                                        <span class="elite-badge @status">@statusText</span>
+                                        @if (status == "none")
+                                        {
+                                            <form asp-action="CheckIn" asp-controller="MyCourses" method="post" class="elite-checkin-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="courseId" value="@Model.KhoaHoc!.Id" />
+                                                <input type="hidden" name="sessionId" value="@s.Id" />
+                                                <button type="submit" class="elite-btn-checkin">
+                                                    Điểm danh
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="elite-panel" data-tab="stats">
+                <div class="elite-stats-grid">
+                    <div class="elite-stat-card">
+                        <div class="elite-stat-icon">GraduationCap</div>
+                        <div class="elite-stat-value">@Model.CompletedLessons<small>/@Model.TotalLessons</small></div>
+                        <div class="elite-stat-label">Bài học đã hoàn thành</div>
+                    </div>
+                    <div class="elite-stat-card">
+                        <div class="elite-stat-icon">Target</div>
+                        <div class="elite-stat-value">@(Model.Stats?.AttendanceRate ?? 0)%</div>
+                        <div class="elite-stat-label">Tỷ lệ điểm danh</div>
+                    </div>
+                    <div class="elite-stat-card">
+                        <div class="elite-stat-icon">Trophy</div>
+                        <div class="elite-stat-value">@(Model.Stats?.AvgScore ?? 0)<small>/100</small></div>
+                        <div class="elite-stat-label">Điểm trung bình</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const baseUrl = '@Url.Action("Details", "MyCourses", new { id = Model.KhoaHoc!.Id })';
+        function startLesson(id, url) {
+            window.open(url, '_blank');
+            location.href = baseUrl + '?activeLessonId=' + id;
+        }
+
+        document.querySelectorAll('.elite-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                document.querySelectorAll('.elite-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.elite-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelector(`.elite-panel[data-tab="${target}"]`).classList.add('active');
+            });
+        });
+    </script>
+}

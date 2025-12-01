@@ -1,0 +1,457 @@
+﻿@model DemoApp.Models.User
+@{
+    ViewData["Title"] = "Xóa người dùng";
+}
+
+<style>
+    .delete-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #dc2626;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    .warning-box {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 2px solid #fca5a5;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+        .warning-box i {
+            font-size: 2.5rem;
+            color: #dc2626;
+        }
+
+    .warning-box-content h3 {
+        color: #dc2626;
+        font-weight: 700;
+        margin-bottom: 5px;
+        font-size: 1.3rem;
+    }
+
+    .warning-box-content p {
+        color: #991b1b;
+        margin: 0;
+    }
+
+    @@keyframes pulse {
+        0%, 100%
+
+    {
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    }
+
+    .card-modern {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        animation: fadeInUp 0.6s ease-out;
+        border: none;
+    }
+
+    .avatar-section {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .avatar-large {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 30px rgba(239, 68, 68, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .avatar-large::before {
+            content: '✕';
+            position: absolute;
+            font-size: 5rem;
+            opacity: 0.2;
+            animation: rotate 3s linear infinite;
+        }
+
+    @@keyframes rotate {
+        from
+
+    {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+    }
+
+    .user-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .user-username {
+        color: #dc2626;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+        .role-badge.admin {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+            color: white;
+        }
+
+        .role-badge.user {
+            background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
+            color: white;
+        }
+
+    .info-group {
+        margin-bottom: 25px;
+    }
+
+    .info-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.95rem;
+    }
+
+        .info-label i {
+            margin-right: 8px;
+            color: #dc2626;
+            width: 20px;
+        }
+
+    .info-value {
+        padding: 12px 16px;
+        background: #f7fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: #2d3748;
+    }
+
+        .info-value.empty {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+    .row-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .danger-note {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 2px solid #fca5a5;
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+        .danger-note i {
+            color: #dc2626;
+            font-size: 1.2rem;
+        }
+
+        .danger-note span {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+    .actions-section {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f0f0f0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 14px 32px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+            color: white;
+        }
+
+    .btn-cancel {
+        background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(148, 163, 184, 0.3);
+    }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(148, 163, 184, 0.4);
+            color: white;
+        }
+
+    .btn-action:active {
+        transform: translateY(0);
+    }
+
+    @@keyframes fadeInDown {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .row-split
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .card-modern {
+        padding: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+
+    .user-name {
+        font-size: 1.5rem;
+    }
+
+    .actions-section {
+        flex-direction: column;
+    }
+
+    .btn-action {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .warning-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    }</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="delete-container">
+    <div class="page-header">
+        <h1>⚠️ Xác nhận xóa người dùng</h1>
+        <p>Hành động này không thể hoàn tác!</p>
+    </div>
+
+    <!-- Warning Box -->
+    <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div class="warning-box-content">
+            <h3>Cảnh báo quan trọng!</h3>
+            <p>Bạn có chắc chắn muốn xóa người dùng này? Tất cả dữ liệu liên quan sẽ bị xóa vĩnh viễn.</p>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <!-- Avatar và thông tin cơ bản -->
+        <div class="avatar-section">
+            <div class="avatar-large">
+                @(string.IsNullOrEmpty(Model.FullName) ? "?" : Model.FullName.Trim().Split(' ').Last().Substring(0, 1).ToUpper())
+            </div>
+            <div class="user-name">@(Model.FullName ?? "Chưa đặt tên")</div>
+            <div class="user-username">@@@Model.Username</div>
+            <span class="role-badge @(Model.Role?.RoleName == "Admin" ? "admin" : "user")">
+                <i class="fas @(Model.Role?.RoleName == "Admin" ? "fa-crown" : "fa-user")"></i>
+                @(Model.Role?.RoleName ?? "User")
+            </span>
+        </div>
+
+        <!-- Thông tin chi tiết -->
+        <div class="info-group">
+            <div class="info-label">
+                <i class="fas fa-user"></i> Họ và tên
+            </div>
+            <div class="info-value @(string.IsNullOrEmpty(Model.FullName) ? "empty" : "")">
+                @(Model.FullName ?? "Chưa cập nhật")
+            </div>
+        </div>
+
+        <div class="row-split">
+            <div class="info-group">
+                <div class="info-label">
+                    <i class="fas fa-envelope"></i> Email
+                </div>
+                <div class="info-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">
+                    @(Model.Email ?? "Chưa có")
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">
+                    <i class="fas fa-phone"></i> Số điện thoại
+                </div>
+                <div class="info-value @(string.IsNullOrEmpty(Model.NumberPhone) ? "empty" : "")">
+                    @(Model.NumberPhone ?? "Chưa cập nhật")
+                </div>
+            </div>
+        </div>
+
+        <div class="info-group">
+            <div class="info-label">
+                <i class="fas fa-map-marker-alt"></i> Địa chỉ
+            </div>
+            <div class="info-value @(string.IsNullOrEmpty(Model.Address) ? "empty" : "")">
+                @(Model.Address ?? "Chưa cập nhật")
+            </div>
+        </div>
+
+        <div class="row-split">
+            <div class="info-group">
+                <div class="info-label">
+                    <i class="fas fa-user-circle"></i> Tên đăng nhập
+                </div>
+                <div class="info-value">
+                    @Model.Username
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">
+                    <i class="fas fa-user-tag"></i> Vai trò
+                </div>
+                <div class="info-value">
+                    <span class="role-badge @(Model.Role?.RoleName == "Admin" ? "admin" : "user")">
+                        @(Model.Role?.RoleName ?? "User")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger note -->
+        <div class="danger-note">
+            <i class="fas fa-trash-alt"></i>
+            <span>Dữ liệu sau khi xóa sẽ không thể khôi phục!</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-section">
+            <form asp-action="Delete" style="display: inline;">
+                <input type="hidden" asp-for="UserId" />
+                <button type="submit" class="btn-action btn-delete">
+                    <i class="fas fa-trash"></i> Xác nhận xóa
+                </button>
+            </form>
+            <a asp-action="Index" class="btn-action btn-cancel">
+                <i class="fas fa-times"></i> Hủy bỏ
+            </a>
+        </div>
+    </div>
+</div>

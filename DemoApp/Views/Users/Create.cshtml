@@ -1,0 +1,84 @@
+﻿@model DemoApp.Models.User
+@{
+    ViewData["Title"] = "Thêm người dùng mới";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3>Thêm người dùng mới</h3>
+                </div>
+                <div class="card-body p-5">
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["Error"]</div>
+                    }
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Success"]</div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="form-label"></label>
+                                <input asp-for="FullName" class="form-control form-control-lg" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control form-control-lg" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="NumberPhone" class="form-label"></label>
+                                <input asp-for="NumberPhone" class="form-control form-control-lg" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Address" class="form-label"></label>
+                                <input asp-for="Address" class="form-control form-control-lg" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Username" class="form-label text-danger fw-bold">Tên đăng nhập *</label>
+                                <input asp-for="Username" class="form-control form-control-lg" required />
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label text-danger fw-bold">Mật khẩu *</label>
+                                <input asp-for="Password" type="password" class="form-control form-control-lg" required />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="RoleId" class="form-label">Vai trò</label>
+                                <select asp-for="RoleId" class="form-select form-select-lg"
+                                        asp-items="ViewBag.RoleId"></select>
+                                <span asp-validation-for="RoleId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg me-3">Hủy</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">Thêm người dùng</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,367 @@
+﻿@model DemoApp.Models.KhoaHoc
+
+@{
+    ViewData["Title"] = "Chỉnh sửa khóa học";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "courses";
+
+    var danhMucList = ViewBag.DanhMucList as IEnumerable<DemoApp.Models.DanhMuc> ?? Enumerable.Empty<DemoApp.Models.DanhMuc>();
+}
+
+@section Styles {
+    <style>
+        .page-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header-left {
+            flex: 1;
+        }
+
+        .page-main-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-description {
+            font-size: 0.95rem;
+            color: #6B7280;
+        }
+
+        .btn-back-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #E5E7EB;
+            background: #FFFFFF;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #374151;
+            transition: 0.2s ease;
+        }
+
+            .btn-back-list:hover {
+                background: #F3F4F6;
+            }
+
+        .course-edit-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .course-edit-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+            .course-edit-card h2 {
+                font-size: 1.1rem;
+                font-weight: 700;
+                margin-bottom: 1.25rem;
+                color: #111827;
+            }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem 1.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+        }
+
+            .form-input:focus,
+            .form-select:focus,
+            .form-textarea:focus {
+                outline: none;
+                border-color: #0050FF;
+                box-shadow: 0 0 0 3px rgba(0,80,255,0.12);
+            }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .field-hint {
+            font-size: 0.8rem;
+            color: #9CA3AF;
+            margin-top: 0.25rem;
+        }
+
+        .validation-text {
+            font-size: 0.8rem;
+            color: #DC2626;
+        }
+
+        .edit-actions-bar {
+            margin-top: 1.75rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-save-primary {
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0050FF, #00D4FF);
+            color: #FFFFFF;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,80,255,0.3);
+            transition: 0.2s ease;
+        }
+
+            .btn-save-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 18px rgba(0,80,255,0.35);
+            }
+
+        .btn-cancel-outline {
+            padding: 0.8rem 1.4rem;
+            border-radius: 10px;
+            border: 1px solid #E5E7EB;
+            background: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #374151;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+            .btn-cancel-outline:hover {
+                background: #F3F4F6;
+            }
+
+        .cover-preview {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 190px;
+            margin-bottom: 0.75rem;
+        }
+
+            .cover-preview img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .meta-list {
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+            .meta-list dt {
+                font-weight: 600;
+                color: #374151;
+            }
+
+            .meta-list dd {
+                margin: 0 0 0.35rem 0;
+            }
+
+        .validation-summary-errors {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        @@media (max-width: 1024px) {
+            .course-edit-wrapper
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        }
+    </style>
+}
+
+<div class="page-header-section">
+    <div class="page-header-left">
+        <h1 class="page-main-title">Chỉnh sửa khóa học</h1>
+        <p class="page-description">Cập nhật thông tin chi tiết cho khóa học @Model.MaKhoaHoc</p>
+    </div>
+    <a href="/admin/courses" class="btn-back-list">
+        ← Quay lại danh sách
+    </a>
+</div>
+
+<div class="course-edit-wrapper">
+    <!-- KHỐI CHÍNH -->
+    <div class="course-edit-card">
+        <h2>Thông tin khóa học</h2>
+
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors text-danger"></div>
+
+            <div class="form-grid-2">
+                <div class="form-field">
+                    <label asp-for="MaKhoaHoc" class="form-label">Mã khóa học</label>
+                    <input asp-for="MaKhoaHoc" class="form-input" />
+                    <span asp-validation-for="MaKhoaHoc" class="validation-text"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="TenKhoaHoc" class="form-label">Tên khóa học</label>
+                    <input asp-for="TenKhoaHoc" class="form-input" />
+                    <span asp-validation-for="TenKhoaHoc" class="validation-text"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="DanhMucId" class="form-label">Danh mục</label>
+                    <select asp-for="DanhMucId" class="form-select">
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach (var dm in danhMucList)
+                        {
+                            <option value="@dm.Id" selected="@(Model.DanhMucId == dm.Id)">
+                                @dm.TenDanhMuc
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="DanhMucId" class="validation-text"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="CapDo" class="form-label">Cấp độ</label>
+                    <select asp-for="CapDo" class="form-select">
+                        <option value="">-- Chọn cấp độ --</option>
+                        <option value="CoBan" selected="@(Model.CapDo == "CoBan")">Cơ bản</option>
+                        <option value="TrungCap" selected="@(Model.CapDo == "TrungCap")">Trung cấp</option>
+                        <option value="NangCao" selected="@(Model.CapDo == "NangCao")">Nâng cao</option>
+                    </select>
+                    <span asp-validation-for="CapDo" class="validation-text"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="GiaTien" class="form-label">Giá tiền (VNĐ)</label>
+                    <input asp-for="GiaTien" class="form-input" />
+                    <span asp-validation-for="GiaTien" class="validation-text"></span>
+                </div>
+
+                <div class="form-field">
+                    <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-select">
+                        <option value="HoatDong" selected="@(Model.TrangThai == "HoatDong")">Hoạt động</option>
+                        <option value="BanNhap" selected="@(Model.TrangThai == "BanNhap")">Bản nháp</option>
+                        <option value="DaAn" selected="@(Model.TrangThai == "DaAn")">Đã ẩn</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="validation-text"></span>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="MoTaNgan" class="form-label">Mô tả ngắn</label>
+                <input asp-for="MoTaNgan" class="form-input" />
+                <span asp-validation-for="MoTaNgan" class="validation-text"></span>
+                <div class="field-hint">Hiển thị ở danh sách khóa học, nên ngắn gọn &amp; dễ hiểu.</div>
+            </div>
+
+          
+            <div class="edit-actions-bar">
+                <a href="/admin/courses" class="btn-cancel-outline">Hủy</a>
+                <button type="submit" class="btn-save-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- KHỐI BÊN PHẢI: ẢNH + META -->
+    <div class="course-edit-card">
+        <h2>Ảnh bìa & thông tin thêm</h2>
+
+        <div class="cover-preview" id="coverPreview">
+            @if (!string.IsNullOrWhiteSpace(Model.AnhBia))
+            {
+                <img src="@Model.AnhBia" alt="Ảnh bìa khóa học" />
+            }
+            else
+            {
+                <span style="font-size:0.85rem;color:#9CA3AF;">Chưa có ảnh bìa</span>
+            }
+        </div>
+
+        <div class="form-field">
+            <label asp-for="AnhBia" class="form-label">Đường dẫn ảnh bìa</label>
+            <input asp-for="AnhBia" class="form-input" id="coverInput" />
+            <span asp-validation-for="AnhBia" class="validation-text"></span>
+            <div class="field-hint">Dùng URL ảnh (CDN / imgur / file tĩnh). Ảnh ngang, tỷ lệ 16:9 sẽ đẹp nhất.</div>
+        </div>
+
+        <dl class="meta-list">
+            <dt>Ngày tạo:</dt>
+            <dd>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt>Mã khóa học:</dt>
+            <dd>@Model.MaKhoaHoc</dd>
+
+            <dt>Số học viên đăng ký:</dt>
+            <dd>@(Model.DangKyKhoaHoc?.Count ?? 0)</dd>
+        </dl>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Preview ảnh bìa khi nhập URL
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('coverInput');
+            const preview = document.getElementById('coverPreview');
+
+            if (!input || !preview) return;
+
+            input.addEventListener('input', function () {
+                const url = this.value.trim();
+                if (!url) {
+                    preview.innerHTML = '<span style="font-size:0.85rem;color:#9CA3AF;">Chưa có ảnh bìa</span>';
+                    return;
+                }
+
+                preview.innerHTML = `<img src="${url}" alt="Ảnh bìa khóa học" />`;
+            });
+        });
+    </script>
+}

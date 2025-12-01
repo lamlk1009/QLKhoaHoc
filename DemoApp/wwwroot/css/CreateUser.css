@@ -1,0 +1,93 @@
+﻿/* Tổng thể form */
+.create-user-wrapper {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tiêu đề */
+.title {
+    color: #4e73df;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Divider */
+.divider {
+    border: 0;
+    height: 1px;
+    background: #e0e0e0;
+    margin-bottom: 25px;
+}
+
+/* Form group */
+.user-form .form-group {
+    margin-bottom: 18px;
+}
+
+.user-form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.user-form input,
+.user-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+    .user-form input:focus,
+    .user-form select:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 6px rgba(78,115,223,0.3);
+    }
+
+/* Nút submit */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #4e73df;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .btn-submit:hover {
+        background-color: #2e59d9;
+    }
+
+/* Link quay lại */
+.back-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+    .back-link a {
+        color: #4e73df;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }

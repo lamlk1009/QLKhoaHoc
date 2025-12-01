@@ -1,0 +1,255 @@
+﻿@model IEnumerable<DemoApp.Models.KhoaHoc>
+
+@{
+    ViewData["Title"] = "Danh sách khóa học";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .courses-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 16px 70px;
+        }
+
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 16px;
+        }
+
+        .courses-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .courses-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .courses-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        /* LƯU Ý: dùng @@media để Razor không hiểu nhầm */
+        @@media (max-width: 992px) {
+            .courses-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .courses-list {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform .15s ease;
+        }
+
+            .course-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            }
+
+        .course-thumb {
+            height: 160px;
+            width: 100%;
+            overflow: hidden;
+            background: #ddd;
+        }
+
+            .course-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .course-body {
+            padding: 16px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .course-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #6b7280;
+        }
+
+        .course-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #111827;
+            margin: 0;
+            min-height: 44px;
+        }
+
+        .course-desc {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0;
+            min-height: 36px;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .course-price {
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        .course-footer {
+            padding: 12px 18px 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-detail,
+        .btn-register {
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-detail {
+            background: #f3f4f6;
+            color: #111827;
+            border: none;
+        }
+
+            .btn-detail:hover {
+                background: #e5e7eb;
+            }
+
+        .btn-register {
+            background: #4f46e5;
+            color: white;
+            border: none;
+        }
+
+            .btn-register:hover {
+                background: #4338ca;
+            }
+
+        .courses-empty {
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            margin-top: 32px;
+        }
+
+            .courses-empty h3 {
+                margin-bottom: 8px;
+                font-size: 20px;
+            }
+
+            .courses-empty p {
+                margin-bottom: 16px;
+                color: #64748b;
+            }
+    </style>
+}
+
+<div class="courses-wrapper">
+    <div class="courses-header">
+        <div>
+            <h1 class="courses-title">Danh sách khóa học</h1>
+            <p class="courses-subtitle">Chọn khóa học phù hợp và bắt đầu ngay hôm nay.</p>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="courses-list">
+            @foreach (var c in Model)
+            {
+                var category = c.DanhMuc?.TenDanhMuc ?? "Chưa phân loại";
+                var thumb = !string.IsNullOrEmpty(c.AnhBia)
+                ? c.AnhBia
+                : "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=800";
+
+                <div class="course-card">
+                    <div class="course-thumb">
+                        <img src="@thumb" alt="@c.TenKhoaHoc" />
+                    </div>
+
+                    <div class="course-body">
+                        <div class="course-category">@category</div>
+
+                        <h3 class="course-title">@c.TenKhoaHoc</h3>
+
+                        @if (!string.IsNullOrEmpty(c.MoTaNgan))
+                        {
+                            <p class="course-desc">@c.MoTaNgan</p>
+                        }
+
+                        <div class="course-meta">
+                            <span>Mã: @c.MaKhoaHoc</span>
+                            <span class="course-price">@c.GiaTien.ToString("N0") đ</span>
+                        </div>
+                    </div>
+
+                    <div class="course-footer">
+                        <a href="/courses/details/@c.Id" class="btn-detail">Chi tiết</a>
+
+                        <form method="post"
+                              asp-controller="User"
+                              asp-action="RegisterCourse"
+                              asp-route-courseId="@c.Id"
+                              style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-register">Đăng ký</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="courses-empty">
+            <h3>Chưa có khóa học nào</h3>
+            <p>Hãy quay lại sau hoặc chọn danh mục khác.</p>
+        </div>
+    }
+</div>

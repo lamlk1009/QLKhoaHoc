@@ -1,0 +1,80 @@
+﻿@model DemoApp.Models.KhoaHoc
+@{
+    ViewData["Title"] = "Thêm khóa học mới";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.ActiveMenu = "courses";
+}
+
+<h1 class="mb-4">Thêm khóa học mới</h1>
+
+<!-- ĐÃ SỬA: BỎ asp-controller="Admin" -->
+<form asp-action="CreateCourse" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="MaKhoaHoc" class="form-label"></label>
+        <input asp-for="MaKhoaHoc" class="form-control" required />
+        <span asp-validation-for="MaKhoaHoc" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TenKhoaHoc" class="form-label"></label>
+        <input asp-for="TenKhoaHoc" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Ảnh bìa</label>
+        <input type="file" name="AnhBiaFile" id="AnhBiaFile" class="form-control" accept="image/*" />
+        <div class="mt-3">
+            <img id="previewImage" src="#" style="max-width:250px; display:none; border-radius:10px;" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Danh mục</label>
+        <select asp-for="DanhMucId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.DanhMucList, "Id", "TenDanhMuc"))">
+            <option value="">-- Chọn danh mục --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CapDo" class="form-label"></label>
+        <select asp-for="CapDo" class="form-select">
+            <option value="CoBan">Cơ bản</option>
+            <option value="TrungCap">Trung cấp</option>
+            <option value="NangCao">Nâng cao</option>
+        </select>
+    </div>
+
+    <input type="hidden" asp-for="GiaTien" value="0" />
+
+    <div class="mb-3">
+        <label asp-for="TrangThai" class="form-label"></label>
+        <select asp-for="TrangThai" class="form-select">
+            <option value="BanNhap" selected>Bản nháp</option>
+            <option value="HoatDong">Hoạt động</option>
+            <option value="DaAn">Đã ẩn</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg">Thêm khóa học</button>
+    <a asp-action="Courses" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("AnhBiaFile").addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById("previewImage");
+                img.src = e.target.result;
+                img.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+}

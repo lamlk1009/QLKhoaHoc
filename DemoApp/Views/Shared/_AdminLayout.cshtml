@@ -1,0 +1,162 @@
+﻿@{
+    Layout = null;
+    var title = ViewData["Title"] as string ?? "LSV Admin";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@title</title>
+
+    <!-- CSS chung -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" />
+
+    <!-- CSS riêng từng trang admin (nếu có) -->
+    @RenderSection("Styles", required: false)
+    @RenderSection("PageStyles", required: false)
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="logo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span class="logo-text">LSV Admin</span>
+                    </div>
+                </div>
+
+                <div class="header-center">
+                    <h1 class="header-title">Chào mừng đến với Trang Quản Trị</h1>
+                    <p class="header-subtitle">Hệ thống quản lý khóa học LSV</p>
+                </div>
+
+                <div class="header-right">
+                    <div class="admin-profile">
+                        <img src="~/images/admin-avatar.jpg" alt="Admin" class="profile-avatar" />
+                        <div class="profile-info">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">Quản trị viên</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-header-top">
+                    <div class="header-title-group">
+                        <h2 class="sidebar-title">Admin Panel</h2>
+                        <p class="sidebar-subtitle">LSV Management</p>
+                    </div>
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item @(ViewBag.ActiveMenu == "dashboard" ? "active" : "")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="/admin/courses" class="nav-item @(ViewBag.ActiveMenu == "courses" ? "active" : "")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Quản lý khóa học</span>
+                </a>
+                <a href="/admin/lessons" class="nav-item @(ViewBag.ActiveMenu == "lessons" ? "active" : "")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Quản lý bài học</span>
+                </a>
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   class="nav-item @(ViewBag.ActiveMenu == "users" ? "active" : "")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Quản lý người dùng</span>
+                </a>
+                <a href="/admin/statistics" class="nav-item @(ViewBag.ActiveMenu == "statistics" ? "active" : "")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Thống kê</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Thu gọn</span>
+                </button>
+                <a href="/Home/Index" class="back-to-site">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Về trang chủ</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main" id="adminMain">
+            <div class="admin-content">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <!-- JS chung -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/admin-dashboard.js"></script>
+
+    <!-- JS riêng từng trang admin (nếu có) -->
+    @RenderSection("Scripts", required: false)
+    @RenderSection("PageScripts", required: false)
+</body>
+</html>
