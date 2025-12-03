@@ -143,6 +143,7 @@
                 box-shadow: 0 0 6px rgba(143, 123, 255, 0.4);
             }
 
+
         /* Sidebar footer */
         .sidebar-footer {
             background: #f7f5ff;
@@ -188,7 +189,7 @@
 
                 <div class="header-right">
                     <div class="admin-profile">
-                        <img src="~/images/admin-avatar.jpg" alt="Admin" class="profile-avatar" />
+                        <img src="~/images/admin.png" alt="Admin" class="profile-avatar" />
                         <div class="profile-info">
                             <span class="profile-name">Admin</span>
                             <span class="profile-role">Quản trị viên</span>
@@ -255,15 +256,7 @@
                     </svg>
                     <span>Quản lý người dùng</span>
                 </a>
-                <a href="/admin/statistics" class="nav-item @(ViewBag.ActiveMenu == "statistics" ? "active" : "")">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                    </svg>
-                    <span>Thống kê</span>
-                </a>
+                
             </nav>
 
             <div class="sidebar-footer">

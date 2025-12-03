@@ -7,284 +7,364 @@
 @section Styles {
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #f3f4f6;
-            --card-bg: rgba(255,255,255,0.8);
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --bg-card: #ffffff;
             --text: #1e293b;
             --text-light: #64748b;
-            --error: #dc2626;
-            --radius: 18px;
+            --shadow-sm: 0 4px 15px rgba(67, 97, 238, 0.1);
+            --shadow-lg: 0 20px 50px rgba(67, 97, 238, 0.15);
+            --radius: 20px;
         }
 
         body {
-            background: linear-gradient(135deg, #a5b4fc, #818cf8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: #f8fafc;
             min-height: 100vh;
-            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Card */
-        .register-card {
-            max-width: 640px;
+        .register-container {
+            max-width: 720px;
             width: 100%;
-            background: var(--card-bg);
-            backdrop-filter: blur(14px);
+        }
+
+        .register-card {
+            background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 40px 48px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.35);
+            padding: 48px 56px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            position: relative;
+            overflow: hidden;
         }
 
-            .register-card h1 {
-                text-align: center;
-                font-size: 2rem;
+            /* Hiệu ứng viền gradient nhẹ */
+            .register-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                padding: 2px;
+                background: linear-gradient(135deg, #c3dafe, #ddd6fe, #fde68a);
+                border-radius: var(--radius);
+                mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+                mask-composite: exclude;
+                -webkit-mask-composite: destination-out;
+                pointer-events: none;
+            }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .card-header h1 {
+                font-size: 2.6rem;
                 font-weight: 800;
-                color: var(--text);
-                margin-bottom: 10px;
+                background: linear-gradient(135deg, #4361ee, #06b6d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin: 0 0 12px 0;
             }
 
-            .register-card p.subtitle {
-                text-align: center;
+            .card-header p {
                 color: var(--text-light);
-                margin-bottom: 40px;
-                font-size: 1rem;
+                font-size: 1.1rem;
+                margin: 0;
             }
 
-        /* Title */
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             font-weight: 700;
-            margin: 25px 0 15px;
-            color: var(--text);
+            color: var(--primary);
+            margin: 32px 0 18px;
+            position: relative;
+            padding-left: 24px;
         }
 
-        /* Form layout */
+            .section-title::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 6px;
+                height: 28px;
+                background: linear-gradient(to bottom, var(--primary), var(--accent));
+                border-radius: 4px;
+            }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            gap: 22px;
+            margin-bottom: 8px;
         }
 
-        .form-group label {
-            font-weight: 500;
+        .form-group {
             margin-bottom: 6px;
-            display: block;
-            color: var(--text);
         }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: var(--text);
+                font-size: 0.98rem;
+            }
 
         input.form-input {
             width: 100%;
-            padding: 14px 18px;
-            background: #fff;
-            border-radius: var(--radius);
-            border: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
             font-size: 1rem;
-            color: #111;
-            transition: all .25s;
+            background: #fff;
+            transition: all 0.25s ease;
         }
 
             input.form-input:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(99,102,241,0.25);
                 outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+                transform: translateY(-1px);
             }
 
-        /* Password show */
         .password-input-wrapper {
             position: relative;
         }
 
-            .password-input-wrapper button {
-                position: absolute;
-                right: 12px;
-                top: 50%;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                color: var(--text-light);
-                cursor: pointer;
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+            .password-toggle:hover {
+                background: rgba(67, 97, 238, 0.1);
+                color: var(--primary);
             }
 
-        /* Checkbox */
         .checkbox-group,
         .terms-checkbox-group {
-            margin-top: 12px;
+            margin: 16px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.95rem;
             color: var(--text-light);
-            font-size: .95rem;
         }
 
             .checkbox-group input,
             .terms-checkbox-group input {
-                width: 18px;
-                height: 18px;
+                width: 20px;
+                height: 20px;
                 accent-color: var(--primary);
-                margin-right: 6px;
+                margin-top: 2px;
             }
 
-        /* Buttons */
+            .terms-checkbox-group a {
+                color: var(--primary);
+                text-decoration: underline;
+                font-weight: 500;
+            }
+
         .form-actions {
-            margin-top: 35px;
+            margin-top: 40px;
             display: flex;
-            gap: 15px;
+            gap: 16px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 16px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.02rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
         }
 
         .btn-secondary {
-            padding: 14px 22px;
-            border-radius: var(--radius);
-            background: #e2e8f0;
-            color: #111;
-            text-decoration: none;
-            font-weight: 600;
-            transition: .25s;
+            background: #f1f5f9;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
         }
 
             .btn-secondary:hover {
-                background: #cbd5e1;
+                background: #e2e8f0;
+                transform: translateY(-2px);
             }
 
         .btn-primary {
             flex: 1;
-            padding: 15px;
             background: var(--primary);
-            color: #fff;
+            color: white;
             border: none;
-            border-radius: var(--radius);
-            font-weight: 700;
-            cursor: pointer;
-            transition: .25s;
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
         }
 
             .btn-primary:hover {
                 background: var(--primary-hover);
+                transform: translateY(-3px);
+                box-shadow: 0 12px 28px rgba(67, 97, 238, 0.4);
             }
 
-        /* Error box */
         .error-message {
-            background: rgba(239,68,68,0.11);
-            border: 1px solid rgba(239,68,68,0.35);
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
             color: var(--error);
-            padding: 14px;
-            border-radius: var(--radius);
-            margin-bottom: 20px;
-            font-size: .95rem;
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
 
         .field-validation-error {
             color: var(--error);
-            font-size: .85rem;
-            margin-top: 4px;
+            font-size: 0.88rem;
+            margin-top: 6px;
+            display: block;
         }
 
-        @@media(max - width:768px) {
-            .form-row
+        @@media (max-width: 768px) {
+            .register-card
 
         {
+            padding: 36px 32px;
+        }
+
+        .form-row {
             grid-template-columns: 1fr;
         }
 
-        .register-card {
-            padding: 30px;
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary {
+            order: -1;
         }
 
         }</style>
 }
 
-<div class="register-card">
-
-    <h1>Đăng ký tài khoản</h1>
-    <p class="subtitle">Mất 30 giây để trở thành thành viên LSV</p>
-
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="error-message">
-            Vui lòng kiểm tra lại thông tin. Có lỗi xảy ra.
-            <div asp-validation-summary="ModelOnly"></div>
-        </div>
-    }
-
-    <form asp-action="Register" method="post">
-        @Html.AntiForgeryToken()
-
-        <!-- Thông tin cá nhân -->
-        <h2 class="section-title">Thông tin cá nhân</h2>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label asp-for="FullName"></label>
-                <input asp-for="FullName" class="form-input" placeholder="Nguyễn Văn A" />
-                <span asp-validation-for="FullName" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="PhoneNumber"></label>
-                <input asp-for="PhoneNumber" class="form-input" placeholder="090xxxxxxx" />
-                <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
-            </div>
+<div class="register-container">
+    <div class="register-card">
+        <div class="card-header">
+            <h1>Đăng ký tài khoản</h1>
+            <p>Chỉ mất 30 giây để trở thành thành viên của chúng tôi</p>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label asp-for="Address"></label>
-                <input asp-for="Address" class="form-input" placeholder="Số nhà, đường,..." />
-                <span asp-validation-for="Address" class="field-validation-error"></span>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-message">
+                <strong>Có lỗi xảy ra!</strong> Vui lòng kiểm tra lại thông tin bên dưới.
+                <div asp-validation-summary="ModelOnly"></div>
             </div>
+        }
 
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" class="form-input" placeholder="you@example.com" />
-                <span asp-validation-for="Email" class="field-validation-error"></span>
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
 
-                <div class="checkbox-group">
-                    <input type="checkbox" asp-for="ReceivePromotion" />
-                    <label asp-for="ReceivePromotion">Gửi hóa đơn VAT qua email</label>
+            <!-- Thông tin cá nhân -->
+            <h2 class="section-title">Thông tin cá nhân</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FullName">Họ và tên</label>
+                    <input asp-for="FullName" class="form-input" placeholder="Nguyễn Văn A" />
+                    <span asp-validation-for="FullName" class="field-validation-error"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" class="form-input" placeholder="0901234567" />
+                    <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
                 </div>
             </div>
-        </div>
 
-        <!-- Mật khẩu -->
-        <h2 class="section-title">Tạo mật khẩu</h2>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <div class="password-input-wrapper">
-                    <input asp-for="Password" type="password" class="form-input" />
-                    <button type="button" onclick="togglePass(this)">Hiện</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Address">Địa chỉ</label>
+                    <input asp-for="Address" class="form-input" placeholder="Số nhà, đường, phường/xã..." />
+                    <span asp-validation-for="Address" class="field-validation-error"></span>
                 </div>
-                <span asp-validation-for="Password" class="field-validation-error"></span>
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" class="form-input" placeholder="you@example.com" />
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <div class="password-input-wrapper">
-                    <input asp-for="ConfirmPassword" type="password" class="form-input" />
-                    <button type="button" onclick="togglePass(this)">Hiện</button>
-                </div>
-                <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+            <div class="checkbox-group">
+                <input type="checkbox" asp-for="ReceivePromotion" />
+                <label asp-for="ReceivePromotion">Gửi thông tin khuyến mãi và hóa đơn qua email</label>
             </div>
-        </div>
 
-        <!-- Điều khoản -->
-        <div class="terms-checkbox-group">
-            <label style="display:flex;align-items:flex-start;gap:10px;">
-                <input asp-for="AcceptTerms" type="checkbox" />
-                <span>
-                    Tôi đồng ý với <a href="#">Điều khoản</a> và <a href="#">Chính sách bảo mật</a>.
-                </span>
-            </label>
-            <span asp-validation-for="AcceptTerms" class="field-validation-error"></span>
-        </div>
+            <!-- Mật khẩu -->
+            <h2 class="section-title">Tạo mật khẩu</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password">Mật khẩu</label>
+                    <div class="password-input-wrapper">
+                        <input asp-for="Password" type="password" class="form-input" />
+                        <button type="button" class="password-toggle" onclick="togglePass(this)">Hiện</button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                    <div class="password-input-wrapper">
+                        <input asp-for="ConfirmPassword" type="password" class="form-input" />
+                        <button type="button" class="password-toggle" onclick="togglePass(this)">Hiện</button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                </div>
+            </div>
 
-        <!-- Button -->
-        <div class="form-actions">
-            <a class="btn-secondary" asp-controller="Account" asp-action="Login">Quay lại</a>
-            <button type="submit" class="btn-primary">Hoàn tất đăng ký</button>
-        </div>
+            <!-- Điều khoản -->
+            <div class="terms-checkbox-group">
+                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer;">
+                    <input asp-for="AcceptTerms" type="checkbox" />
+                    <span>
+                        Tôi đã đọc và đồng ý với <a href="#" target="_blank">Điều khoản dịch vụ</a> và
+                        <a href="#" target="_blank">Chính sách bảo mật</a> của hệ thống.
+                    </span>
+                </label>
+                <span asp-validation-for="AcceptTerms" class="field-validation-error"></span>
+            </div>
 
-    </form>
+            <!-- Nút hành động -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    Hoàn tất đăng ký
+                </button>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-secondary">
+                    Đã có tài khoản? Đăng nhập
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {
@@ -300,7 +380,6 @@
             }
         }
     </script>
-
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

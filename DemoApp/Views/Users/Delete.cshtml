@@ -1,6 +1,7 @@
 ﻿@model DemoApp.Models.User
 @{
     ViewData["Title"] = "Xóa người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
@@ -442,15 +443,19 @@
         </div>
 
         <!-- Actions -->
+        <!-- Actions -->
         <div class="actions-section">
-            <form asp-action="Delete" style="display: inline;">
+            <form method="post" asp-action="Delete">
+                @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="UserId" />
+
                 <button type="submit" class="btn-action btn-delete">
-                    <i class="fas fa-trash"></i> Xác nhận xóa
+                    <i class="fas fa-trash"></i> Xác nhận xóa vĩnh viễn
                 </button>
             </form>
+
             <a asp-action="Index" class="btn-action btn-cancel">
-                <i class="fas fa-times"></i> Hủy bỏ
+                <i class="fas fa-times"></i> Hủy bỏ, quay lại
             </a>
         </div>
     </div>

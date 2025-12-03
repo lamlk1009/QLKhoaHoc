@@ -185,6 +185,34 @@
                 object-fit: cover;
             }
 
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-choose-file {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 2px dashed #0050FF;
+            background: #F0F7FF;
+            color: #0050FF;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+            .btn-choose-file:hover {
+                background: #E0EFFF;
+                border-color: #0040DD;
+            }
+
+        .file-input-hidden {
+            display: none;
+        }
+
         .meta-list {
             font-size: 0.85rem;
             color: #6B7280;
@@ -213,8 +241,7 @@
             grid-template-columns: 1fr;
         }
 
-        }
-    </style>
+        }</style>
 }
 
 <div class="page-header-section">
@@ -227,13 +254,14 @@
     </a>
 </div>
 
-<div class="course-edit-wrapper">
-    <!-- KHỐI CHÍNH -->
-    <div class="course-edit-card">
-        <h2>Thông tin khóa học</h2>
+<!-- FORM BỌC TOÀN BỘ 2 CỘT -->
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" id="mainEditForm">
+    @Html.AntiForgeryToken()
 
-        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
-            @Html.AntiForgeryToken()
+    <div class="course-edit-wrapper">
+        <!-- KHỐI TRÁI: THÔNG TIN -->
+        <div class="course-edit-card">
+            <h2>Thông tin khóa học</h2>
 
             <div asp-validation-summary="ModelOnly" class="validation-summary-errors text-danger"></div>
 
@@ -299,68 +327,102 @@
                 <div class="field-hint">Hiển thị ở danh sách khóa học, nên ngắn gọn &amp; dễ hiểu.</div>
             </div>
 
-          
+            <!-- INPUT FILE ẨN - QUAN TRỌNG: PHẢI NẰM TRONG FORM -->
+            <input type="file"
+                   name="ImageFile"
+                   id="imageFileInput"
+                   class="file-input-hidden"
+                   accept="image/*" />
+
             <div class="edit-actions-bar">
                 <a href="/admin/courses" class="btn-cancel-outline">Hủy</a>
                 <button type="submit" class="btn-save-primary">Lưu thay đổi</button>
             </div>
-        </form>
-    </div>
-
-    <!-- KHỐI BÊN PHẢI: ẢNH + META -->
-    <div class="course-edit-card">
-        <h2>Ảnh bìa & thông tin thêm</h2>
-
-        <div class="cover-preview" id="coverPreview">
-            @if (!string.IsNullOrWhiteSpace(Model.AnhBia))
-            {
-                <img src="@Model.AnhBia" alt="Ảnh bìa khóa học" />
-            }
-            else
-            {
-                <span style="font-size:0.85rem;color:#9CA3AF;">Chưa có ảnh bìa</span>
-            }
         </div>
 
-        <div class="form-field">
-            <label asp-for="AnhBia" class="form-label">Đường dẫn ảnh bìa</label>
-            <input asp-for="AnhBia" class="form-input" id="coverInput" />
-            <span asp-validation-for="AnhBia" class="validation-text"></span>
-            <div class="field-hint">Dùng URL ảnh (CDN / imgur / file tĩnh). Ảnh ngang, tỷ lệ 16:9 sẽ đẹp nhất.</div>
+        <!-- KHỐI PHẢI: ẢNH + META -->
+        <div class="course-edit-card">
+            <h2>Ảnh bìa & thông tin thêm</h2>
+
+            <div class="cover-preview" id="coverPreview">
+                @if (!string.IsNullOrWhiteSpace(Model.AnhBia))
+                {
+                    <img src="@Model.AnhBia" alt="Ảnh bìa khóa học" />
+                }
+                else
+                {
+                    <div class="upload-area">
+                        <span style="font-size:0.85rem;color:#9CA3AF;">Chưa có ảnh bìa</span>
+                    </div>
+                }
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Chọn ảnh bìa</label>
+                <!-- NÚT TRIGGER INPUT FILE -->
+                <button type="button" class="btn-choose-file" onclick="document.getElementById('imageFileInput').click()">
+                    📁 Chọn ảnh từ máy tính
+                </button>
+                <div class="field-hint">Chọn ảnh ngang, tỷ lệ 16:9 sẽ đẹp nhất. Dung lượng tối đa 5MB.</div>
+            </div>
+
+            <dl class="meta-list">
+                <dt>Ngày tạo:</dt>
+                <dd>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                <dt>Mã khóa học:</dt>
+                <dd>@Model.MaKhoaHoc</dd>
+
+                <dt>Số học viên đăng ký:</dt>
+                <dd>@(Model.DangKyKhoaHoc?.Count ?? 0)</dd>
+            </dl>
         </div>
-
-        <dl class="meta-list">
-            <dt>Ngày tạo:</dt>
-            <dd>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</dd>
-
-            <dt>Mã khóa học:</dt>
-            <dd>@Model.MaKhoaHoc</dd>
-
-            <dt>Số học viên đăng ký:</dt>
-            <dd>@(Model.DangKyKhoaHoc?.Count ?? 0)</dd>
-        </dl>
     </div>
-</div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        // Preview ảnh bìa khi nhập URL
         document.addEventListener('DOMContentLoaded', function () {
-            const input = document.getElementById('coverInput');
+            const fileInput = document.getElementById('imageFileInput');
             const preview = document.getElementById('coverPreview');
 
-            if (!input || !preview) return;
+            if (!fileInput || !preview) {
+                console.error('Cannot find file input or preview element');
+                return;
+            }
 
-            input.addEventListener('input', function () {
-                const url = this.value.trim();
-                if (!url) {
-                    preview.innerHTML = '<span style="font-size:0.85rem;color:#9CA3AF;">Chưa có ảnh bìa</span>';
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+
+                console.log('File selected:', file); // Debug
+
+                if (!file) return;
+
+                // Kiểm tra loại file
+                if (!file.type.startsWith('image/')) {
+                    alert('Vui lòng chọn file ảnh!');
+                    fileInput.value = '';
                     return;
                 }
 
-                preview.innerHTML = `<img src="${url}" alt="Ảnh bìa khóa học" />`;
+                // Kiểm tra dung lượng (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ảnh không được vượt quá 5MB!');
+                    fileInput.value = '';
+                    return;
+                }
+
+                // Preview ảnh
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    preview.innerHTML = `<img src="${event.target.result}" alt="Ảnh bìa khóa học" />`;
+                };
+                reader.onerror = function() {
+                    alert('Lỗi đọc file!');
+                };
+                reader.readAsDataURL(file);
             });
         });
     </script>

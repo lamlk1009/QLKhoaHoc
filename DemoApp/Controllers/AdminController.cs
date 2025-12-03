@@ -160,83 +160,206 @@ namespace DemoApp.Controllers
             return RedirectToAction(nameof(Courses));
         }
         // =============== EDIT COURSE (GET) ===============
+        // =============== EDIT COURSE (GET) ===============
         [HttpGet("admin/courses/edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
             var course = await _context.KhoaHoc
-                .Include(k => k.DanhMuc)
+                .Include(k => k.DangKyKhoaHoc)
                 .FirstOrDefaultAsync(k => k.Id == id);
 
-            if (course == null) return NotFound();
+            if (course == null)
+                return NotFound();
 
+            // Load danh mục cho dropdown
             ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
-
 
             return View(course);
         }
+
         // =============== EDIT COURSE (POST) ===============
         [HttpPost("admin/courses/edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, KhoaHoc model)
+        public async Task<IActionResult> Edit(int id, KhoaHoc model, IFormFile ImageFile)
         {
-            var course = await _context.KhoaHoc.FirstOrDefaultAsync(k => k.Id == id);
-            if (course == null) return NotFound();
-
-            // 👉 CHECK TRÙNG MÃ KHÓA HỌC (EDIT) – loại trừ chính nó
-            bool maTrung = await _context.KhoaHoc
-                .AnyAsync(k => k.Id != id && k.MaKhoaHoc == model.MaKhoaHoc);
-
-            if (maTrung)
+            System.Diagnostics.Debug.WriteLine($"ImageFile is null: {ImageFile == null}");
+            if (ImageFile != null)
             {
-                ModelState.AddModelError("MaKhoaHoc", "Mã khóa học này đã tồn tại, hãy chọn mã khác.");
+                System.Diagnostics.Debug.WriteLine($"File name: {ImageFile.FileName}, Size: {ImageFile.Length}");
             }
-
-            if (!ModelState.IsValid)
+            try
             {
-                // Cần load lại danh mục để dropdown không bị null
+                var course = await _context.KhoaHoc.FirstOrDefaultAsync(k => k.Id == id);
+                if (course == null) return NotFound();
+
+                // CHECK TRÙNG MÃ KHÓA HỌC (loại trừ chính nó)
+                bool maTrung = await _context.KhoaHoc
+                    .AnyAsync(k => k.Id != id && k.MaKhoaHoc == model.MaKhoaHoc);
+                if (maTrung)
+                {
+                    ModelState.AddModelError("MaKhoaHoc", "Mã khóa học này đã tồn tại, hãy chọn mã khác.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
+                    return View(model);
+                }
+
+                // XỬ LÝ UPLOAD ẢNH
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    try
+                    {
+                        // Validate file
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(ImageFile.FileName).ToLower();
+
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("", "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .gif)");
+                            ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
+                            return View(model);
+                        }
+
+                        if (ImageFile.Length > 5 * 1024 * 1024) // 5MB
+                        {
+                            ModelState.AddModelError("", "Ảnh không được vượt quá 5MB");
+                            ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
+                            return View(model);
+                        }
+
+                        // Tạo tên file duy nhất
+                        var fileName = $"{Guid.NewGuid()}{extension}";
+
+                        // Đường dẫn lưu file
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "courses");
+
+                        // Tạo folder nếu chưa có
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        // Xóa ảnh cũ nếu có
+                        if (!string.IsNullOrEmpty(course.AnhBia))
+                        {
+                            var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", course.AnhBia.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        // Lưu file mới
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await ImageFile.CopyToAsync(stream);
+                        }
+
+                        // Cập nhật đường dẫn ảnh
+                        course.AnhBia = $"/uploads/courses/{fileName}";
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", "Lỗi upload ảnh: " + ex.Message);
+                        ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
+                        return View(model);
+                    }
+                }
+
+                // Update các thuộc tính khác
+                course.TenKhoaHoc = model.TenKhoaHoc;
+                course.MaKhoaHoc = model.MaKhoaHoc;
+                course.MoTaNgan = model.MoTaNgan;
+                course.GiaTien = model.GiaTien;
+                course.CapDo = model.CapDo;
+                course.DanhMucId = model.DanhMucId;
+                course.TrangThai = model.TrangThai;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật khóa học thành công!";
+
+                // SỬA: Dùng tên action trực tiếp thay vì nameof
+                return RedirectToAction("Courses");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi: " + ex.Message;
                 ViewBag.DanhMucList = await _context.DanhMuc.ToListAsync();
                 return View(model);
             }
-
-            // update thuộc tính
-            course.TenKhoaHoc = model.TenKhoaHoc;
-            course.MaKhoaHoc = model.MaKhoaHoc;
-            course.MoTaNgan = model.MoTaNgan;
-            
-            course.GiaTien = model.GiaTien;
-            course.CapDo = model.CapDo;
-            course.DanhMucId = model.DanhMucId;
-            course.TrangThai = model.TrangThai;
-            course.AnhBia = model.AnhBia;
-
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Cập nhật khóa học thành công!";
-            return RedirectToAction(nameof(Courses));
         }
         // =============== DELETE COURSE ===============
-        [HttpPost("admin/courses/delete/{id}")]
+        [HttpPost]
+        [Route("admin/courses/delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var course = await _context.KhoaHoc
-                .Include(k => k.DangKyKhoaHoc)
-                .Include(k => k.BaiHoc) // nếu có bảng bài học
-                .FirstOrDefaultAsync(k => k.Id == id);
+            try
+            {
+                var course = await _context.KhoaHoc
+                    .Include(k => k.DangKyKhoaHoc)
+                    .Include(k => k.BaiHoc)
+                    .Include(k => k.BuoiHocs)      // Sửa: BuoiHocs (có chữ s)
+                    .Include(k => k.DiemDanhs)     // Thêm: DiemDanhs (có chữ s)
+                    .Include(k => k.TienDoHocTap)  // Thêm: TienDoHocTap
+                    .FirstOrDefaultAsync(k => k.Id == id);
 
-            if (course == null) return NotFound();
+                if (course == null)
+                    return NotFound(new { success = false, msg = "Không tìm thấy khóa học" });
 
-            // Nếu có đăng ký khóa học thì xóa luôn
-            if (course.DangKyKhoaHoc != null)
-                _context.DangKyKhoaHoc.RemoveRange(course.DangKyKhoaHoc);
+                // 1. Xóa Điểm danh
+                if (course.DiemDanhs?.Any() == true)
+                {
+                    _context.DiemDanh.RemoveRange(course.DiemDanhs);
+                }
 
-            // Nếu có bài học thì xóa luôn
-            if (course.BaiHoc != null)
-                _context.BaiHoc.RemoveRange(course.BaiHoc);
+                // 2. Xóa Buổi học
+                if (course.BuoiHocs?.Any() == true)
+                {
+                    _context.BuoiHoc.RemoveRange(course.BuoiHocs);
+                }
 
-            _context.KhoaHoc.Remove(course);
-            await _context.SaveChangesAsync();
+                // 3. Xóa Đăng ký khóa học
+                if (course.DangKyKhoaHoc?.Any() == true)
+                {
+                    _context.DangKyKhoaHoc.RemoveRange(course.DangKyKhoaHoc);
+                }
 
-            return Ok();
+                // 4. Xóa Tiến độ học tập (của khóa học)
+                if (course.TienDoHocTap?.Any() == true)
+                {
+                    _context.TienDoHocTap.RemoveRange(course.TienDoHocTap);
+                }
+
+                // 5. Xóa Bài học và dữ liệu liên quan
+                if (course.BaiHoc?.Any() == true)
+                {
+                    foreach (var baiHoc in course.BaiHoc)
+                    {
+                        // Xóa tiến độ học tập của từng bài học
+                        var tienDoBaiHoc = _context.TienDoHocTap
+                            .Where(t => t.BaiHocId == baiHoc.Id);
+                        _context.TienDoHocTap.RemoveRange(tienDoBaiHoc);
+                    }
+                    _context.BaiHoc.RemoveRange(course.BaiHoc);
+                }
+
+                // 6. Cuối cùng xóa Khóa học
+                _context.KhoaHoc.Remove(course);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    msg = ex.InnerException?.Message ?? ex.Message
+                });
+            }
         }
 
         // GET: /admin/lessons?khoahocId=5
@@ -412,15 +535,23 @@ namespace DemoApp.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public JsonResult DeleteLesson(int id)
         {
             try
             {
                 var lesson = _context.BaiHoc.FirstOrDefault(x => x.Id == id);
                 if (lesson == null)
-                    return Json(new { success = false, msg = "Không tìm thấy" });
+                    return Json(new { success = false, msg = "Không tìm thấy bài học" });
 
+                // XÓA TIẾN ĐỘ HỌC TẬP LIÊN QUAN TRƯỚC
+                var tienDoLienQuan = _context.TienDoHocTap.Where(x => x.BaiHocId == id);
+                _context.TienDoHocTap.RemoveRange(tienDoLienQuan);
+
+                // Xóa các dữ liệu liên quan khác (nếu có)
+                // var baiTap = _context.BaiTap.Where(x => x.BaiHocId == id);
+                // _context.BaiTap.RemoveRange(baiTap);
+
+                // Cuối cùng mới xóa BaiHoc
                 _context.BaiHoc.Remove(lesson);
                 _context.SaveChanges();
 
@@ -428,10 +559,14 @@ namespace DemoApp.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, msg = ex.Message });
+                return Json(new
+                {
+                    success = false,
+                    msg = ex.InnerException?.Message ?? ex.Message
+                });
             }
         }
-        // Quản lý người dùng
+
         public IActionResult Users() => View();
 
         // Đơn hàng

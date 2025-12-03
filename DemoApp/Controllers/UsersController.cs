@@ -170,97 +170,142 @@ namespace DemoApp.Controllers
             return View(user);
         }
 
-        // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)              
+        // GET: Hiển thị form Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.User == null)
-            {
-                return NotFound();
-            }
-
             var user = await _context.User.FindAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
-            ViewData["RoleId"] = new SelectList(_context.Set<Role>(), "RoleId", "RoleId", user.RoleId);
+
+            // Load danh sách Role cho dropdown
+            ViewBag.RoleId = new SelectList(_context.Role, "RoleId", "RoleName", user.RoleId);
+
             return View(user);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Xử lý submit form
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,Email,NumberPhone,Address,Username,RoleId")] User user, string? NewPassword)
+        public async Task<IActionResult> Edit(int id, User model)
         {
-            if (id != user.UserId)
-            {
+            if (id != model.UserId)
                 return NotFound();
+
+            // Kiểm tra trùng Username (trừ user hiện tại)
+            var existingUser = await _context.User
+                .FirstOrDefaultAsync(u => u.Username == model.Username && u.UserId != id);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Username", "Username đã tồn tại!");
             }
 
-            if (ModelState.IsValid)
+            // Kiểm tra trùng Email (trừ user hiện tại)
+            var existingEmail = await _context.User
+                .FirstOrDefaultAsync(u => u.Email == model.Email && u.UserId != id);
+            if (existingEmail != null)
             {
-                try
-                {
-                  
-                    if (!string.IsNullOrEmpty(NewPassword))
-                    {
-                        user.Password = NewPassword;
-                    }
-                    
+                ModelState.AddModelError("Email", "Email đã được sử dụng!");
+            }
 
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RoleId = new SelectList(_context.Role, "RoleId", "RoleName", model.RoleId);
+                return View(model);
+            }
 
-                    TempData["Success"] = "Cập nhật thành công!";
-                }
-                catch (DbUpdateException)
+            try
+            {
+                var user = await _context.User.FindAsync(id);
+                if (user == null)
+                    return NotFound();
+
+                // Cập nhật thông tin
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.NumberPhone = model.NumberPhone;
+                user.Address = model.Address;
+                user.Username = model.Username;
+                user.RoleId = model.RoleId;
+
+                // Chỉ cập nhật password nếu người dùng nhập mới
+                if (!string.IsNullOrEmpty(model.Password))
                 {
-                    TempData["Error"] = "Lỗi khi cập nhật!";
+                    user.Password = model.Password; // Nên hash password trước khi lưu
                 }
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật user thành công!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi: " + ex.Message;
+                ViewBag.RoleId = new SelectList(_context.Role, "RoleId", "RoleName", model.RoleId);
+                return View(model);
+            }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _context.User
+                .Include(u => u.Role)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Không tìm thấy người dùng!";
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.RoleId = new SelectList(_context.Role, "RoleId", "RoleName", user.RoleId);
-            return View(user);
-        }
-
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.User == null)
+            // Không cho xóa chính mình
+            var currentUser = User.Identity?.Name;
+            if (user.Username == currentUser || user.Email == currentUser)
             {
-                return NotFound();
-            }
-
-            var user = await _context.User
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
-            {
-                return NotFound();
+                TempData["Error"] = "Không thể xóa tài khoản đang đăng nhập!";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(user);
         }
 
-        // POST: Users/Delete/5
+        // POST: Users/Delete/5 → Xóa thật sự
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.User == null)
-            {
-                return Problem("Entity set 'AppDbContext.User'  is null.");
-            }
             var user = await _context.User.FindAsync(id);
-            if (user != null)
+            if (user == null)
+            {
+                TempData["Error"] = "Người dùng không tồn tại hoặc đã bị xóa.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Kiểm tra lại không cho xóa chính mình
+            var currentUser = User.Identity?.Name;
+            if (user.Username == currentUser || user.Email == currentUser)
+            {
+                TempData["Error"] = "Không thể xóa tài khoản đang đăng nhập!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
             {
                 _context.User.Remove(user);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"Đã xóa người dùng \"{user.Username}\" thành công!";
             }
-            
-            await _context.SaveChangesAsync();
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = $"Không thể xóa \"{user.Username}\" vì có dữ liệu liên quan (đăng ký khóa học, bình luận, v.v.)";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi khi xóa: " + ex.Message;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

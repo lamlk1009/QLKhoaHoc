@@ -249,7 +249,11 @@
                        
                         <td>
                             <div class="action-buttons">
-                                <button href="/admin/courses/edit/@k.Id" class="btn-action-text edit-btn">Sửa</button>
+                                <button type="button"
+                                        onclick="window.location.href='/admin/courses/edit/@k.Id'"
+                                        class="btn-action-text edit-btn">
+                                    Sửa
+                                </button>
                                 <button type="button" class="btn-action-text delete-btn"
                                         onclick="deleteCourse(@k.Id, '@k.TenKhoaHoc')">
                                     Xóa
@@ -280,11 +284,23 @@
                 fetch(`/admin/courses/delete/${id}`, {
                     method: 'POST',
                     headers: {
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        'Content-Type': 'application/json'
                     }
                 })
-                .then(r => r.ok ? (alert('Đã xóa!'), location.reload()) : alert('Lỗi khi xóa'))
-                .catch(() => alert('Lỗi kết nối'));
+                .then(r => {
+                    if (r.ok) {
+                        alert('Đã xóa khóa học!');
+                        location.reload();
+                    } else {
+                        return r.json().then(data => {
+                            alert('Lỗi: ' + (data.msg || 'Không thể xóa'));
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Lỗi kết nối server!');
+                });
             }
         }
 
@@ -307,7 +323,9 @@
                 });
             };
 
-            [search, cat, status, level].forEach(el => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', filter));
+            [search, cat, status, level].forEach(el =>
+                el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', filter)
+            );
         });
     </script>
 }

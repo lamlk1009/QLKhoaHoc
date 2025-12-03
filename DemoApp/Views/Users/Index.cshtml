@@ -78,12 +78,13 @@
                                                        class="btn btn-sm btn-outline-warning" title="Sửa">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a asp-action="Delete" asp-route-id="@item.UserId"
+                                                    <a asp-action="Delete"
+                                                       asp-route-id="@item.UserId"
                                                        class="btn btn-sm btn-outline-danger rounded-end"
-                                                       onclick="return confirm('Xóa user @item.Username thật chứ?')"
                                                        title="Xóa">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
+
                                                 </div>
                                             </td>
                                         </tr>
@@ -104,6 +105,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Footer card -->
             <div class="mt-3 text-center text-muted small">
@@ -153,7 +155,46 @@
         }
     </style>
 }
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function confirmDelete(userId, username) {
+            const result = await Swal.fire({
+                title: 'Xóa người dùng?',
+                html: `Bạn có chắc muốn <strong class="text-danger">xóa vĩnh viễn</strong> người dùng:<br><br>
+                       <strong class="text-primary fs-5">${username}</strong>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có, xóa luôn!',
+                cancelButtonText: 'Hủy bỏ',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger px-4',
+                    cancelButton: 'btn btn-secondary px-4'
+                }
+            });
+
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                // SỬA DÒNG NÀY LÀ CHẠY NGON
+                form.action = '@Url.Action("Delete", "Users")?id=' + userId;
+
+                // Thêm antiforgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                if (token) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = '__RequestVerificationToken';
+                    input.value = token;
+                    form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
 }
